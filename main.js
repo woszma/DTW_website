@@ -35,21 +35,21 @@ const designWorks = [
   new Work(105, 'Installation 05', 'Event_Exhibition_Installation', 2025, fixPath('/images/Design_portfolio/Event_Exhibition_Installation/Event_Exhibition_Installation00005.jpg'), '', 'design'),
   
   // Multimedia
-  new Work(201, 'Multimedia 01', 'Multimedia', 2024, fixPath('/images/Design_portfolio/Multimedia/Multimedia00001.png'), '', 'design'),
-  new Work(202, 'Multimedia 02', 'Multimedia', 2024, fixPath('/images/Design_portfolio/Multimedia/Multimedia00002.png'), '', 'design'),
+  new Work(201, 'Multimedia 01', 'Multimedia', 2024, fixPath('/images/Design_portfolio/Multimedia/Multimedia00001.jpg'), '', 'design'),
+  new Work(202, 'Multimedia 02', 'Multimedia', 2024, fixPath('/images/Design_portfolio/Multimedia/Multimedia00002.jpg'), '', 'design'),
   new Work(203, 'Multimedia 03', 'Multimedia', 2024, fixPath('/images/Design_portfolio/Multimedia/Multimedia00003.png'), '', 'design'),
   
   // Printing Materials
   new Work(301, 'Print 01', 'Printing Materials', 2024, fixPath('/images/Design_portfolio/Printing Materials/Printing Materials00001.jpeg'), '', 'design'),
-  new Work(302, 'Print 02', 'Printing Materials', 2024, fixPath('/images/Design_portfolio/Printing Materials/Printing Materials00002.png'), '', 'design'),
+  new Work(302, 'Print 02', 'Printing Materials', 2024, fixPath('/images/Design_portfolio/Printing Materials/Printing Materials00002.jpg'), '', 'design'),
   new Work(303, 'Print 03', 'Printing Materials', 2024, fixPath('/images/Design_portfolio/Printing Materials/Printing Materials00003.png'), '', 'design'),
-  new Work(304, 'Print 04', 'Printing Materials', 2024, fixPath('/images/Design_portfolio/Printing Materials/Printing Materials00004.png'), '', 'design'),
-  new Work(305, 'Print 05', 'Printing Materials', 2024, fixPath('/images/Design_portfolio/Printing Materials/Printing Materials00005.png'), '', 'design'),
+  new Work(304, 'Print 04', 'Printing Materials', 2024, fixPath('/images/Design_portfolio/Printing Materials/Printing Materials00004.jpg'), '', 'design'),
+  new Work(305, 'Print 05', 'Printing Materials', 2024, fixPath('/images/Design_portfolio/Printing Materials/Printing Materials00005.jpg'), '', 'design'),
   
   // Souvenir
   new Work(401, 'Souvenir 01', 'Souvenir', 2024, fixPath('/images/Design_portfolio/Souvenir/Souvenir00001.jpg'), '', 'design'),
   new Work(402, 'Souvenir 02', 'Souvenir', 2024, fixPath('/images/Design_portfolio/Souvenir/Souvenir00002.jpeg'), '', 'design'),
-  new Work(403, 'Souvenir 03', 'Souvenir', 2024, fixPath('/images/Design_portfolio/Souvenir/Souvenir00003.png'), '', 'design'),
+  new Work(403, 'Souvenir 03', 'Souvenir', 2024, fixPath('/images/Design_portfolio/Souvenir/Souvenir00003.jpg'), '', 'design'),
   new Work(404, 'Souvenir 04', 'Souvenir', 2024, fixPath('/images/Design_portfolio/Souvenir/Souvenir00004.jpg'), '', 'design'),
   new Work(405, 'Souvenir 05', 'Souvenir', 2024, fixPath('/images/Design_portfolio/Souvenir/Souvenir00005.jpg'), '', 'design')
 ];
