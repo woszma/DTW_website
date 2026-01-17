@@ -80,7 +80,7 @@ export const Home = (vm) => {
         </nav>
       </div>
       <div class="home-footer-info">
-        <p>© 2026 HIDEAKI HAMADA inspired by DTW</p>
+        <p>© 2026 DIPTOWHITE PRODUCTION</p>
       </div>
     </div>
   `;
