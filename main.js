@@ -6,6 +6,15 @@ import { Home } from './src/views/Home.js';
 import { About } from './src/views/About.js';
 import { Services } from './src/views/Services.js';
 
+// 資源路徑修復工具
+const fixPath = (path) => {
+  if (!path || path.startsWith('http')) return path;
+  let cleanPath = path.replace(/^\/public\//, '/');
+  if (!cleanPath.startsWith('/')) cleanPath = '/' + cleanPath;
+  const base = (import.meta.env.BASE_URL || '/').replace(/\/$/, '');
+  return base + cleanPath;
+};
+
 // 初始化數據
 const photographyWorks = [
   new Work(1, 'Family Moments', 'editorial', 2024, 'https://images.unsplash.com/photo-1549417229-aa67d3263c91?auto=format&fit=crop&w=1200&q=80', 'A serene family moment in nature.', 'photography', 'https://assets.mixkit.co/videos/preview/mixkit-mother-with-her-little-daughter-playing-in-a-field-of-flowers-34281-large.mp4'),
@@ -20,92 +29,92 @@ const photography = [...photographyWorks, ...photographyWorks, ...photographyWor
 const designWorks = [
   // Event_Exhibition_Installation
   new Work(101, 'Installation 01', 'Event_Exhibition_Installation', 2025, 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1200&q=80', '', 'design', 'https://assets.mixkit.co/videos/preview/mixkit-blue-and-red-lights-on-a-concert-4017-large.mp4'),
-  new Work(102, 'Installation 02', 'Event_Exhibition_Installation', 2025, '/public/images/Design_portfolio/Event_Exhibition_Installation/Event_Exhibition_Installation00002.jpg', '', 'design'),
-  new Work(103, 'Installation 03', 'Event_Exhibition_Installation', 2025, '/public/images/Design_portfolio/Event_Exhibition_Installation/Event_Exhibition_Installation00003.jpg', '', 'design'),
-  new Work(104, 'Installation 04', 'Event_Exhibition_Installation', 2025, '/public/images/Design_portfolio/Event_Exhibition_Installation/Event_Exhibition_Installation00004.jpg', '', 'design'),
-  new Work(105, 'Installation 05', 'Event_Exhibition_Installation', 2025, '/public/images/Design_portfolio/Event_Exhibition_Installation/Event_Exhibition_Installation00005.jpg', '', 'design'),
+  new Work(102, 'Installation 02', 'Event_Exhibition_Installation', 2025, fixPath('/images/Design_portfolio/Event_Exhibition_Installation/Event_Exhibition_Installation00002.jpg'), '', 'design'),
+  new Work(103, 'Installation 03', 'Event_Exhibition_Installation', 2025, fixPath('/images/Design_portfolio/Event_Exhibition_Installation/Event_Exhibition_Installation00003.jpg'), '', 'design'),
+  new Work(104, 'Installation 04', 'Event_Exhibition_Installation', 2025, fixPath('/images/Design_portfolio/Event_Exhibition_Installation/Event_Exhibition_Installation00004.jpg'), '', 'design'),
+  new Work(105, 'Installation 05', 'Event_Exhibition_Installation', 2025, fixPath('/images/Design_portfolio/Event_Exhibition_Installation/Event_Exhibition_Installation00005.jpg'), '', 'design'),
   
   // Multimedia
-  new Work(201, 'Multimedia 01', 'Multimedia', 2024, '/public/images/Design_portfolio/Multimedia/Multimedia00001.png', '', 'design'),
-  new Work(202, 'Multimedia 02', 'Multimedia', 2024, '/public/images/Design_portfolio/Multimedia/Multimedia00002.png', '', 'design'),
-  new Work(203, 'Multimedia 03', 'Multimedia', 2024, '/public/images/Design_portfolio/Multimedia/Multimedia00003.png', '', 'design'),
+  new Work(201, 'Multimedia 01', 'Multimedia', 2024, fixPath('/images/Design_portfolio/Multimedia/Multimedia00001.png'), '', 'design'),
+  new Work(202, 'Multimedia 02', 'Multimedia', 2024, fixPath('/images/Design_portfolio/Multimedia/Multimedia00002.png'), '', 'design'),
+  new Work(203, 'Multimedia 03', 'Multimedia', 2024, fixPath('/images/Design_portfolio/Multimedia/Multimedia00003.png'), '', 'design'),
   
   // Printing Materials
-  new Work(301, 'Print 01', 'Printing Materials', 2024, '/public/images/Design_portfolio/Printing Materials/Printing Materials00001.jpeg', '', 'design'),
-  new Work(302, 'Print 02', 'Printing Materials', 2024, '/public/images/Design_portfolio/Printing Materials/Printing Materials00002.png', '', 'design'),
-  new Work(303, 'Print 03', 'Printing Materials', 2024, '/public/images/Design_portfolio/Printing Materials/Printing Materials00003.png', '', 'design'),
-  new Work(304, 'Print 04', 'Printing Materials', 2024, '/public/images/Design_portfolio/Printing Materials/Printing Materials00004.png', '', 'design'),
-  new Work(305, 'Print 05', 'Printing Materials', 2024, '/public/images/Design_portfolio/Printing Materials/Printing Materials00005.png', '', 'design'),
+  new Work(301, 'Print 01', 'Printing Materials', 2024, fixPath('/images/Design_portfolio/Printing Materials/Printing Materials00001.jpeg'), '', 'design'),
+  new Work(302, 'Print 02', 'Printing Materials', 2024, fixPath('/images/Design_portfolio/Printing Materials/Printing Materials00002.png'), '', 'design'),
+  new Work(303, 'Print 03', 'Printing Materials', 2024, fixPath('/images/Design_portfolio/Printing Materials/Printing Materials00003.png'), '', 'design'),
+  new Work(304, 'Print 04', 'Printing Materials', 2024, fixPath('/images/Design_portfolio/Printing Materials/Printing Materials00004.png'), '', 'design'),
+  new Work(305, 'Print 05', 'Printing Materials', 2024, fixPath('/images/Design_portfolio/Printing Materials/Printing Materials00005.png'), '', 'design'),
   
   // Souvenir
-  new Work(401, 'Souvenir 01', 'Souvenir', 2024, '/public/images/Design_portfolio/Souvenir/Souvenir00001.jpg', '', 'design'),
-  new Work(402, 'Souvenir 02', 'Souvenir', 2024, '/public/images/Design_portfolio/Souvenir/Souvenir00002.jpeg', '', 'design'),
-  new Work(403, 'Souvenir 03', 'Souvenir', 2024, '/public/images/Design_portfolio/Souvenir/Souvenir00003.png', '', 'design'),
-  new Work(404, 'Souvenir 04', 'Souvenir', 2024, '/public/images/Design_portfolio/Souvenir/Souvenir00004.jpg', '', 'design'),
-  new Work(405, 'Souvenir 05', 'Souvenir', 2024, '/public/images/Design_portfolio/Souvenir/Souvenir00005.jpg', '', 'design')
+  new Work(401, 'Souvenir 01', 'Souvenir', 2024, fixPath('/images/Design_portfolio/Souvenir/Souvenir00001.jpg'), '', 'design'),
+  new Work(402, 'Souvenir 02', 'Souvenir', 2024, fixPath('/images/Design_portfolio/Souvenir/Souvenir00002.jpeg'), '', 'design'),
+  new Work(403, 'Souvenir 03', 'Souvenir', 2024, fixPath('/images/Design_portfolio/Souvenir/Souvenir00003.png'), '', 'design'),
+  new Work(404, 'Souvenir 04', 'Souvenir', 2024, fixPath('/images/Design_portfolio/Souvenir/Souvenir00004.jpg'), '', 'design'),
+  new Work(405, 'Souvenir 05', 'Souvenir', 2024, fixPath('/images/Design_portfolio/Souvenir/Souvenir00005.jpg'), '', 'design')
 ];
 
 // 實讀取用戶錄像作品
 const videoWorks = [
-  new Work(501, 'Commercial 01', 'Commercial', 2025, 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1200&q=80', 'High-end commercial video.', 'video', '/public/Videos/Theme_Clip/活動花䋈/A.mp4'),
-  new Work(502, 'Short Film 01', 'Short Film', 2024, 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1200&q=80', 'Artistic short film.', 'video', '/public/Videos/Theme_Clip/人物故事/A.mp4'),
-  new Work(503, 'Documentary 01', 'Documentary', 2024, 'https://images.unsplash.com/photo-1449156006071-8219323f462a?auto=format&fit=crop&w=1200&q=80', 'Nature documentary.', 'video', '/public/Videos/Theme_Clip/特別主題/A.mp4')
+  new Work(501, 'Commercial 01', 'Commercial', 2025, 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1200&q=80', 'High-end commercial video.', 'video', fixPath('/Videos/Theme_Clip/活動花䋈/A.mp4')),
+  new Work(502, 'Short Film 01', 'Short Film', 2024, 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1200&q=80', 'Artistic short film.', 'video', fixPath('/Videos/Theme_Clip/人物故事/A.mp4')),
+  new Work(503, 'Documentary 01', 'Documentary', 2024, 'https://images.unsplash.com/photo-1449156006071-8219323f462a?auto=format&fit=crop&w=1200&q=80', 'Nature documentary.', 'video', fixPath('/Videos/Theme_Clip/特別主題/A.mp4'))
 ];
 
 // 背景视频列表 (移除燈泡視頻 bg_video00001.mp4)
 const backgroundVideos = [
-  '/Videos/Background_Video/bg_video00002.mp4',
-  '/Videos/Background_Video/bg_video00003.mp4',
-  '/Videos/Background_Video/bg_video00004.mp4',
-  '/Videos/Background_Video/bg_video00005.mp4'
+  fixPath('/Videos/Background_Video/bg_video00002.mp4'),
+  fixPath('/Videos/Background_Video/bg_video00003.mp4'),
+  fixPath('/Videos/Background_Video/bg_video00004.mp4'),
+  fixPath('/Videos/Background_Video/bg_video00005.mp4')
 ];
 
 // 主題素材庫 (支持混合視頻與圖片)
 const themeVideoLibraries = {
   'events': [
-    '/Videos/Theme_Clip/活動花䋈/A.mp4',
-    '/Videos/Theme_Clip/活動花䋈/B.mp4',
-    '/Videos/Theme_Clip/活動花䋈/C.mp4'
+    fixPath('/Videos/Theme_Clip/活動花䋈/A.mp4'),
+    fixPath('/Videos/Theme_Clip/活動花䋈/B.mp4'),
+    fixPath('/Videos/Theme_Clip/活動花䋈/C.mp4')
   ],
   'exhibition': [
-    '/Videos/Theme_Clip/活動展覽/Souvenir00001.jpg',
-    '/Videos/Theme_Clip/活動展覽/Souvenir00002.jpeg',
-    '/Videos/Theme_Clip/活動展覽/Souvenir00003.png',
-    '/Videos/Theme_Clip/活動展覽/Souvenir00004.jpg',
-    '/Videos/Theme_Clip/活動展覽/Souvenir00005.jpg'
+    fixPath('/images/Design_portfolio/Event_Exhibition_Installation/Event_Exhibition_Installation00001.jpg'),
+    fixPath('/images/Design_portfolio/Event_Exhibition_Installation/Event_Exhibition_Installation00002.jpg'),
+    fixPath('/images/Design_portfolio/Event_Exhibition_Installation/Event_Exhibition_Installation00003.jpg'),
+    fixPath('/images/Design_portfolio/Event_Exhibition_Installation/Event_Exhibition_Installation00004.jpg'),
+    fixPath('/images/Design_portfolio/Event_Exhibition_Installation/Event_Exhibition_Installation00005.jpg')
   ],
   'stories': [
-    '/Videos/Theme_Clip/人物故事/A.mp4',
-    '/Videos/Theme_Clip/人物故事/B.mp4'
+    fixPath('/Videos/Theme_Clip/人物故事/A.mp4'),
+    fixPath('/Videos/Theme_Clip/人物故事/B.mp4')
   ],
   'special': [
-    '/Videos/Theme_Clip/特別主題/A.mp4',
-    '/Videos/Theme_Clip/特別主題/B.mp4'
+    fixPath('/Videos/Theme_Clip/特別主題/A.mp4'),
+    fixPath('/Videos/Theme_Clip/特別主題/B.mp4')
   ],
   'brand': [
-    '/Videos/Background_Video/bg_video00002.mp4',
-    '/Videos/Background_Video/bg_video00003.mp4',
-    '/Videos/Background_Video/bg_video00004.mp4',
-    '/Videos/Background_Video/bg_video00005.mp4'
+    fixPath('/Videos/Background_Video/bg_video00002.mp4'),
+    fixPath('/Videos/Background_Video/bg_video00003.mp4'),
+    fixPath('/Videos/Background_Video/bg_video00004.mp4'),
+    fixPath('/Videos/Background_Video/bg_video00005.mp4')
   ],
   'printing': [
-    '/Videos/Theme_Clip/印刷品/Printing Materials00001.jpeg',
-    '/Videos/Theme_Clip/印刷品/Printing Materials00002.png',
-    '/Videos/Theme_Clip/印刷品/Printing Materials00003.png',
-    '/Videos/Theme_Clip/印刷品/Printing Materials00004.png',
-    '/Videos/Theme_Clip/印刷品/Printing Materials00005.png'
+    fixPath('/images/Design_portfolio/Printing Materials/Printing Materials00001.jpeg'),
+    fixPath('/images/Design_portfolio/Printing Materials/Printing Materials00002.png'),
+    fixPath('/images/Design_portfolio/Printing Materials/Printing Materials00003.png'),
+    fixPath('/images/Design_portfolio/Printing Materials/Printing Materials00004.png'),
+    fixPath('/images/Design_portfolio/Printing Materials/Printing Materials00005.png')
   ],
   'multimedia': [
-    '/Videos/Theme_Clip/多媒體/Multimedia00001.png',
-    '/Videos/Theme_Clip/多媒體/Multimedia00002.png',
-    '/Videos/Theme_Clip/多媒體/Multimedia00003.png'
+    fixPath('/images/Design_portfolio/Multimedia/Multimedia00001.png'),
+    fixPath('/images/Design_portfolio/Multimedia/Multimedia00002.png'),
+    fixPath('/images/Design_portfolio/Multimedia/Multimedia00003.png')
   ],
   'souvenir': [
-    '/Videos/Theme_Clip/紀念品/Souvenir00001.jpg',
-    '/Videos/Theme_Clip/紀念品/Souvenir00002.jpeg',
-    '/Videos/Theme_Clip/紀念品/Souvenir00003.png',
-    '/Videos/Theme_Clip/紀念品/Souvenir00004.jpg',
-    '/Videos/Theme_Clip/紀念品/Souvenir00005.jpg'
+    fixPath('/images/Design_portfolio/Souvenir/Souvenir00001.jpg'),
+    fixPath('/images/Design_portfolio/Souvenir/Souvenir00002.jpeg'),
+    fixPath('/images/Design_portfolio/Souvenir/Souvenir00003.png'),
+    fixPath('/images/Design_portfolio/Souvenir/Souvenir00004.jpg'),
+    fixPath('/images/Design_portfolio/Souvenir/Souvenir00005.jpg')
   ]
 };
 

@@ -1,4 +1,5 @@
 export const Home = (vm) => {
+  const base = (import.meta.env.BASE_URL || '/').replace(/\/$/, '');
   // 獲取最近的幾個作品作為清單
   const recentWorks = vm.works.slice(0, 5);
   
@@ -13,7 +14,7 @@ export const Home = (vm) => {
           loop 
           playsinline
         >
-          <source src="/Videos/Background_Video/bg_video00002.mp4" type="video/mp4">
+          <source src="${base}/Videos/Background_Video/bg_video00002.mp4" type="video/mp4">
         </video>
       </div>
       <div class="home-bg-overlay"></div>

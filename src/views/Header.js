@@ -1,4 +1,5 @@
 export const Header = (vm) => {
+  const base = (import.meta.env.BASE_URL || '/').replace(/\/$/, '');
   const categories = vm.mainType === 'photography' 
     ? ['all', 'advertising', 'editorial', 'video', 'portrait', 'other']
     : vm.mainType === 'design'
@@ -12,7 +13,7 @@ export const Header = (vm) => {
       <div class="header-content">
         <h1 class="logo">
           <a href="#" id="go-home">
-            <img src="/images/DTW Logo/DTW logo_WHITE.png" alt="DTW Logo" class="logo-img">
+            <img src="${base}/images/DTW Logo/DTW logo_WHITE.png" alt="DTW Logo" class="logo-img">
           </a>
         </h1>
         <div class="main-nav-links">
