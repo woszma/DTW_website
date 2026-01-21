@@ -31,13 +31,13 @@ export const Header = (vm) => {
       <nav class="category-nav" id="category-nav">
         <div class="filter-group">
           <div class="type-switch">
-            <a href="#" class="main-type-link ${vm.mainType === 'photography' ? 'active' : ''}" data-type="photography">PHOTOGRAPHY</a>
-            <span class="nav-divider">/</span>
-            <a href="#" class="main-type-link ${vm.mainType === 'design' ? 'active' : ''}" data-type="design">DESIGN</a>
+            <a href="#" class="main-type-link ${vm.mainType === 'all' ? 'active' : ''}" data-type="all">ALL</a>
             <span class="nav-divider">/</span>
             <a href="#" class="main-type-link ${vm.mainType === 'video' ? 'active' : ''}" data-type="video">VIDEO</a>
             <span class="nav-divider">/</span>
-            <a href="#" class="main-type-link ${vm.mainType === 'all' ? 'active' : ''}" data-type="all">ALL</a>
+            <a href="#" class="main-type-link ${vm.mainType === 'photography' ? 'active' : ''}" data-type="photography">PHOTOGRAPHY</a>
+            <span class="nav-divider">/</span>
+            <a href="#" class="main-type-link ${vm.mainType === 'design' ? 'active' : ''}" data-type="design">DESIGN</a>
           </div>
           
           <ul class="cat-list">

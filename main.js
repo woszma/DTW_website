@@ -385,6 +385,15 @@ const setupAdminListeners = (vm) => {
         mediaUrl = await vm.uploadFile(mediaFile);
       }
 
+      // Handle multiple images
+      const imagesFiles = document.getElementById('work-images-files').files;
+      let extraImages = [];
+      if (imagesFiles.length > 0) {
+        const uploadPromises = Array.from(imagesFiles).map(file => vm.uploadFile(file));
+        extraImages = await Promise.all(uploadPromises);
+        extraImages = extraImages.filter(url => url !== null);
+      }
+
       const workData = {
         title, year, mainType, category, description,
         thumbnail, mediaUrl,
@@ -392,9 +401,19 @@ const setupAdminListeners = (vm) => {
       };
 
       if (workId) {
+        // For updates, we might want to keep existing images if no new ones are uploaded
+        // This is a simple implementation; a full CRM would allow managing the array.
+        const existingWork = vm.works.find(w => w.id.toString() === workId.toString());
+        if (extraImages.length > 0) {
+          workData.images = extraImages;
+        } else if (existingWork && existingWork.images) {
+          workData.images = existingWork.images;
+        }
+
         await vm.updateWork(workId, workData);
         alert('作品已更新!');
       } else {
+        workData.images = extraImages;
         await vm.addWork({ ...workData, createdAt: new Date() });
         alert('作品已保存!');
       }

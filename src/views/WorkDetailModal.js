@@ -1,14 +1,17 @@
 export const WorkDetailModal = (work, vm) => {
-    if (!work) return '';
+  if (!work) return '';
 
-    return `
+  return `
     <div class="modal-overlay" id="modal-overlay">
       <div class="modal-content">
         <button class="modal-close" id="modal-close">&times;</button>
         
         <div class="modal-body">
           <div class="modal-media">
-            <img src="${vm.fixPath(work.thumbnail)}" alt="${work.title}" />
+            ${work.images && work.images.length > 0
+      ? work.images.map(img => `<img src="${vm.fixPath(img)}" alt="${work.title}" />`).join('')
+      : `<img src="${vm.fixPath(work.thumbnail)}" alt="${work.title}" />`
+    }
           </div>
           
           <div class="modal-info">

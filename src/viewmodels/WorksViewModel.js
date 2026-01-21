@@ -15,7 +15,7 @@ export class WorksViewModel {
     this.works = works.filter(w => !this.deletedIds.includes(w.id.toString()));
     this.filteredWorks = this.works;
     this.currentCategory = 'all';
-    this.mainType = 'photography'; // 'photography' or 'design'
+    this.mainType = 'all'; // Default to 'all'
     this.viewMode = 'grid'; // 'grid' or 'list'
     this.currentPage = 'home'; // 'home', 'works', 'about', 'services', 'admin'
     this.listeners = [];

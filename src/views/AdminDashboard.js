@@ -63,6 +63,12 @@ export const AdminDashboard = (vm) => {
           </div>
 
           <div>
+            <label>額外相片 (可多選)</label>
+            <input type="file" id="work-images-files" multiple accept="image/*">
+            <p style="font-size: 10px; opacity: 0.6; margin-top: 5px;">(呢度上傳嘅相會顯示喺詳情彈窗入面)</p>
+          </div>
+
+          <div>
              <label>作品詳情連結/視頻 (可選)</label>
              <input type="file" id="work-media-file" accept="video/*,image/*">
              <input type="text" id="work-media-url" placeholder="輸入視頻/詳情圖 URL" style="width: 100%; padding: 8px; margin-top: 5px;">
