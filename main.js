@@ -13,6 +13,7 @@ import { WorkDetailModal } from './src/views/WorkDetailModal.js';
 // State for loading
 let isLoading = true;
 let lastPage = null;
+let lastUser = null;
 
 // 資源路徑修復工具
 const fixPath = (path) => {
@@ -251,21 +252,23 @@ const render = () => {
     document.querySelector('.home-container')?.remove();
 
     if (vm.currentPage === 'admin') {
+      const isAuthChanged = lastUser !== vm.user;
+
       if (vm.user) {
-        // 如果頁面冇切換，我哋只更新列表數據，唔好重新渲染整個 Form
-        // 咁樣可以防止正在編輯嘅內容被重置，亦可以防止 confirm 視窗閃退
-        if (isPageChanged) {
+        // 如果頁面或登入狀態切換，我哋需要渲染 Dashboard
+        if (isPageChanged || isAuthChanged) {
           appRoot.innerHTML = AdminDashboard(vm);
           setupAdminListeners(vm);
         } else {
           updateAdminTableOnly(vm);
         }
       } else {
-        if (isPageChanged) {
+        if (isPageChanged || isAuthChanged) {
           appRoot.innerHTML = AdminLogin(vm);
           setupLoginListeners(vm);
         }
       }
+      lastUser = vm.user;
     } else {
       // 標準頁面
       if (isPageChanged) {

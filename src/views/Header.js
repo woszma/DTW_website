@@ -27,7 +27,7 @@ export const Header = (vm) => {
         </button>
       </div>
       
-      ${!isHome ? `
+      ${!isHome && vm.currentPage !== 'admin' ? `
       <nav class="category-nav" id="category-nav">
         <div class="filter-group">
           <div class="type-switch">
