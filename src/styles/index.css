@@ -792,7 +792,10 @@ body.is-home main {
   max-width: 1000px;
   max-height: 90vh;
   position: relative;
-  overflow-y: auto;
+  overflow: hidden;
+  /* Change from auto to hidden */
+  display: flex;
+  flex-direction: column;
   animation: modalFadeIn 0.3s ease-out;
 }
 
@@ -828,13 +831,17 @@ body.is-home main {
 .modal-body {
   display: grid;
   grid-template-columns: 1.5fr 1fr;
-  min-height: 500px;
+  flex: 1;
+  overflow: hidden;
+  height: 100%;
 }
 
 .modal-media {
   display: flex;
   flex-direction: column;
   gap: 0;
+  overflow-y: auto;
+  height: 100%;
 }
 
 .modal-media img {
@@ -847,6 +854,10 @@ body.is-home main {
   padding: 60px 40px;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  height: 100%;
+  background: #fff;
+  border-left: 1px solid #f0f0f0;
 }
 
 .modal-header {
