@@ -221,6 +221,7 @@ const render = () => {
             <div id="header-root"></div>
             <main id="app-root" class="container"></main>
             <div id="footer-root"></div>
+            <div id="modal-root"></div>
          `;
       headerRoot = document.getElementById('header-root');
       appRoot = document.getElementById('app-root');
@@ -589,10 +590,12 @@ const setupEventListeners = () => {
   document.querySelectorAll('.work-item, .list-item').forEach(item => {
     item.addEventListener('click', (e) => {
       e.preventDefault();
-      const workId = item.dataset.id || item.querySelector('.item-title')?.textContent; // For list-item, title might be more reliable if ID not on data
+      const workId = item.dataset.id;
+      console.log('[Popup] Clicked item ID:', workId);
 
-      // Find work in VM
-      const work = vm.works.find(w => w.id.toString() === workId?.toString() || w.title === workId);
+      const work = vm.works.find(w => w.id.toString() === workId?.toString());
+      console.log('[Popup] Found work:', work);
+
       if (work) {
         openWorkDetail(work);
       }
