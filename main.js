@@ -527,14 +527,38 @@ const setupAdminListeners = (vm) => {
           document.getElementById('work-thumbnail-url').value = work.thumbnail;
           document.getElementById('work-media-url').value = work.mediaUrl || '';
 
-          // 顯示現有額外相片
+          // 顯示現有額外相片 (加入個別刪除功能)
           const previewContainer = document.getElementById('existing-images-preview');
           if (previewContainer && work.images) {
-            previewContainer.innerHTML = work.images.map(img => `
-              <div style="position: relative;">
+            previewContainer.innerHTML = work.images.map((img, index) => `
+              <div style="position: relative;" class="preview-img-wrapper" data-index="${index}">
                 <img src="${vm.fixPath(img)}" style="width: 60px; height: 60px; object-fit: cover; border: 1px solid #ddd; border-radius: 4px;" />
+                <button type="button" class="remove-single-img" data-url="${img}" style="position: absolute; top: -5px; right: -5px; width: 18px; height: 18px; background: #ff4d4d; color: white; border: none; border-radius: 50%; cursor: pointer; font-size: 12px; line-height: 18px; padding: 0;">&times;</button>
               </div>
             `).join('');
+
+            // 個別刪除事件 (Delegate to container)
+            previewContainer.onclick = async (e) => {
+              const removeBtn = e.target.closest('.remove-single-img');
+              if (removeBtn) {
+                const urlToRemove = removeBtn.dataset.url;
+                const workId = document.getElementById('work-id').value;
+                if (!workId) return;
+
+                if (confirm('確定要移除呢張相片嗎？')) {
+                  try {
+                    const currentWork = vm.works.find(w => w.id.toString() === workId.toString());
+                    const updatedImages = currentWork.images.filter(img => img !== urlToRemove);
+                    await vm.updateWork(workId, { images: updatedImages });
+                    // 重新觸發編輯按鈕嘅邏輯來更新預覽圖列
+                    removeBtn.closest('.preview-img-wrapper').remove();
+                    alert('相片已移除！');
+                  } catch (err) {
+                    alert('移除失敗: ' + err.message);
+                  }
+                }
+              }
+            };
           } else if (previewContainer) {
             previewContainer.innerHTML = '';
           }
