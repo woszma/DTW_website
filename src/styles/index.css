@@ -1,5 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap');
 
+@font-face {
+  font-family: 'LiXianTi';
+  src: url('/fonts/LiXianTi.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 :root {
   --bg-color: #f5f5f5;
   --text-color: #333333;
@@ -358,19 +365,19 @@ body:not(.is-home) .logo-img {
 }
 
 .home-main-title {
+  font-family: 'LiXianTi', cursive;
   font-size: 3.2rem;
-  /* 稍微縮小一點以適配中文 */
   line-height: 1.3;
-  font-weight: 500;
+  font-weight: 300;
   color: #ffffff;
-  /* 改為純白色 */
-  letter-spacing: 0.05em;
+  letter-spacing: 0.1em;
 }
 
 .hero-accent {
+  font-family: 'LiXianTi', cursive;
   font-size: 42px;
   display: block;
-  opacity: 0.8;
+  opacity: 0.9;
   margin-top: 10px;
   letter-spacing: 0.1em;
 }
@@ -456,6 +463,7 @@ body:not(.is-home) .logo-img {
   font-size: 10px;
   letter-spacing: 0.1em;
   opacity: 0.6;
+  z-index: 10;
 }
 
 /* Update main-header for Home transparency */

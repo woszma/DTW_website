@@ -5,8 +5,15 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 export class WorksViewModel {
   constructor(works = []) {
-    this.works = works;
-    this.filteredWorks = works;
+    // 從 localStorage 獲取已刪除的硬編碼 ID
+    this.deletedIds = JSON.parse(localStorage.getItem('dtw_deleted_ids') || '[]');
+
+    // 保存原始硬編碼作品副本，供同步使用
+    this.originalHardcodedWorks = [...works];
+
+    // 過濾掉已刪除的作品
+    this.works = works.filter(w => !this.deletedIds.includes(w.id.toString()));
+    this.filteredWorks = this.works;
     this.currentCategory = 'all';
     this.mainType = 'photography'; // 'photography' or 'design'
     this.viewMode = 'grid'; // 'grid' or 'list'
@@ -73,7 +80,9 @@ export class WorksViewModel {
   }
 
   subscribe(listener) {
-    this.listeners.push(listener);
+    if (!this.listeners.includes(listener)) {
+      this.listeners.push(listener);
+    }
   }
 
   notify() {
@@ -130,26 +139,36 @@ export class WorksViewModel {
   }
 
   async deleteWork(workId) {
-    console.log('VM actual delete started for:', workId);
+    console.log('[VM] deleteWork called with ID:', workId, 'Type:', typeof workId);
     try {
-      // 嘗試從 Firestore 刪除 (如果是 Firestore 項目)
-      // 注意：即使 Firestore 刪除失敗或找不到文檔，我們也應該更新本地狀態（如果是 Hardcoded 項目）
+      // 嘗試從 Firestore 刪除
       try {
         await deleteDoc(doc(db, "works", workId.toString()));
-        console.log('Firestore delete successful for:', workId);
+        console.log('[VM] Firestore delete attempt finished for:', workId);
       } catch (fsErr) {
-        console.warn("Firestore delete issue (might be hardcoded):", fsErr);
+        console.warn("[VM] Firestore delete failed (likely hardcoded):", fsErr);
       }
 
       // 更新本地狀態
       const initialCount = this.works.length;
-      this.works = this.works.filter(w => w.id.toString() !== workId.toString());
-      console.log('Local works after filter. Previous count:', initialCount, 'New count:', this.works.length);
+      this.works = this.works.filter(w => {
+        const match = w.id.toString() === workId.toString();
+        // if (match) console.log('[VM] Match found for deletion:', w.id);
+        return !match;
+      });
+      console.log('[VM] Local works filtered. Before:', initialCount, 'After:', this.works.length);
+
+      // 持久化刪除記錄
+      if (!this.deletedIds.includes(workId.toString())) {
+        this.deletedIds.push(workId.toString());
+        localStorage.setItem('dtw_deleted_ids', JSON.stringify(this.deletedIds));
+        console.log('[VM] ID saved to localStorage:', workId);
+      }
 
       this.updateFilteredWorks();
       this.notify();
     } catch (e) {
-      console.error("Error in deleteWork process:", e);
+      console.error("[VM] Error in deleteWork process:", e);
     }
   }
 
@@ -195,18 +214,24 @@ export class WorksViewModel {
         fetchedWorks.push({ ...doc.data(), id: doc.id });
       });
 
-      // 過濾掉本地已經存在的 Firestore 作品 (避免重複)
-      // 同時保留本地硬編碼作品
-      const hardcodedWorks = this.works.filter(w => {
-        // 假設硬編碼 ID 都是數字或短字串，Firestore ID 是長字串
-        // 另一種方法係 check 佢係咪喺 fetchedWorks 已經出現過
-        return !fetchedWorks.some(fw => fw.id.toString() === w.id.toString());
+      // 1. 過濾掉已刪除的作品 (不論是 Firestore 還是 Hardcoded)
+      const visibleFetched = fetchedWorks.filter(fw => !this.deletedIds.includes(fw.id.toString()));
+
+      // 2. 獲取硬編碼作品
+      //    注意：this.initialHardcodedWorks 應該在 constructor 中保存一份原始副本
+      const hardcoded = this.originalHardcodedWorks || this.works;
+
+      const filteredHardcoded = hardcoded.filter(w => {
+        const isDeleted = this.deletedIds.includes(w.id.toString());
+        // 如果 Firestore 中已經存在相同標題的作品，則視為已遷移，隱藏硬編碼版本
+        const isDuplicate = visibleFetched.some(fw => fw.title === w.title);
+        return !isDeleted && !isDuplicate;
       });
 
-      this.works = [...fetchedWorks, ...hardcodedWorks];
+      this.works = [...visibleFetched, ...filteredHardcoded];
       this.updateFilteredWorks();
       this.notify();
-      console.log('Data synced. Total works:', this.works.length);
+      console.log('[VM] Sync complete. Firestore:', visibleFetched.length, 'Hardcoded:', filteredHardcoded.length);
     } catch (e) {
       console.error("Error fetching works: ", e);
     }

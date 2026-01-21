@@ -11,6 +11,7 @@ import { AdminDashboard } from './src/views/AdminDashboard.js';
 
 // State for loading
 let isLoading = true;
+let lastPage = null;
 
 // 資源路徑修復工具
 const fixPath = (path) => {
@@ -141,25 +142,27 @@ const startCarousel = (theme = null) => {
   if (theme && themeVideoLibraries[theme]) {
     currentLibrary = themeVideoLibraries[theme];
     currentVideoIndex = 0;
-    const media = currentLibrary[currentVideoIndex];
-    if (isImage(media)) {
-      updateHomeBackground(media, null);
-    } else {
-      updateHomeBackground(null, media);
-    }
   } else {
     currentLibrary = backgroundVideos;
   }
 
-  carouselInterval = setInterval(() => {
+  const nextSlide = () => {
     currentVideoIndex = (currentVideoIndex + 1) % currentLibrary.length;
     const media = currentLibrary[currentVideoIndex];
     if (isImage(media)) {
-      updateHomeBackground(media, null);
+      updateHomeBackground(media, null, nextSlide);
     } else {
-      updateHomeBackground(null, media);
+      updateHomeBackground(null, media, nextSlide);
     }
-  }, 4000);
+  };
+
+  // 初始播放
+  const firstMedia = currentLibrary[currentVideoIndex];
+  if (isImage(firstMedia)) {
+    updateHomeBackground(firstMedia, null, nextSlide);
+  } else {
+    updateHomeBackground(null, firstMedia, nextSlide);
+  }
 };
 
 const stopCarousel = () => {
@@ -251,6 +254,7 @@ const render = () => {
 
   if (isLoading) {
     document.body.innerHTML = Loading();
+    lastPage = null; // Reset on loading
     return;
   } else {
     // Restore body structure if it was replaced by Loading
@@ -260,7 +264,6 @@ const render = () => {
             <main id="app-root" class="container"></main>
             <div id="footer-root"></div>
          `;
-      // Re-get references
       headerRoot = document.getElementById('header-root');
       appRoot = document.getElementById('app-root');
     }
@@ -268,6 +271,8 @@ const render = () => {
 
   // 始終渲染 Header
   headerRoot.innerHTML = Header(vm);
+
+  const isPageChanged = lastPage !== vm.currentPage;
 
   // 更新 Body Class 以適配透明 Header
   if (vm.currentPage === 'home') {
@@ -283,31 +288,74 @@ const render = () => {
   } else {
     document.body.classList.remove('is-home');
     stopCarousel();
-    // 重要：確保背景顏色恢復
     document.body.style.backgroundColor = '#ffffff';
     document.querySelector('.home-container')?.remove();
 
-    if (vm.currentPage === 'works') {
-      appRoot.innerHTML = WorksGrid(vm);
-    } else if (vm.currentPage === 'services') {
-      appRoot.innerHTML = Services(vm);
-    } else if (vm.currentPage === 'about') {
-      appRoot.innerHTML = About(vm);
-    } else if (vm.currentPage === 'admin') {
+    if (vm.currentPage === 'admin') {
       if (vm.user) {
-        appRoot.innerHTML = AdminDashboard(vm);
-        setupAdminListeners(vm);
+        // 如果頁面冇切換，我哋只更新列表數據，唔好重新渲染整個 Form
+        // 咁樣可以防止正在編輯嘅內容被重置，亦可以防止 confirm 視窗閃退
+        if (isPageChanged) {
+          appRoot.innerHTML = AdminDashboard(vm);
+          setupAdminListeners(vm);
+        } else {
+          updateAdminTableOnly(vm);
+        }
       } else {
-        appRoot.innerHTML = AdminLogin(vm);
-        setupLoginListeners(vm);
+        if (isPageChanged) {
+          appRoot.innerHTML = AdminLogin(vm);
+          setupLoginListeners(vm);
+        }
+      }
+    } else {
+      // 標準頁面
+      if (isPageChanged) {
+        if (vm.currentPage === 'works') {
+          appRoot.innerHTML = WorksGrid(vm);
+        } else if (vm.currentPage === 'services') {
+          appRoot.innerHTML = Services(vm);
+        } else if (vm.currentPage === 'about') {
+          appRoot.innerHTML = About(vm);
+        }
+      } else if (vm.currentPage === 'works') {
+        // Works 頁面如果有數據更新，亦可以做增量更新
+        appRoot.innerHTML = WorksGrid(vm);
       }
     }
   }
 
-  // Setup listeners for standard pages
-  if (vm.currentPage !== 'admin') {
+  // 始終保持 Listener 同步 (除咗 Admin Login 之外)
+  // 如果係 Admin Login，setupLoginListeners 會自己搞掂內容 listener
+  // 但 Header listener 仍然需要 re-attach
+  if (vm.currentPage !== 'admin' || vm.user) {
     setupEventListeners();
   }
+
+  lastPage = vm.currentPage;
+};
+
+// 專為 Admin 頁面設計嘅增量更新
+const updateAdminTableOnly = (vm) => {
+  const tbody = document.getElementById('admin-works-table-body');
+  if (!tbody) return;
+
+  console.log('[View] Incremental update for Admin Table');
+  tbody.innerHTML = vm.works.map(work => `
+            <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 10px; font-size: 11px; opacity: 0.6;">${work.id}</td>
+                <td style="padding: 10px;">
+                    <img src="${fixPath(work.thumbnail)}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+                </td>
+                <td style="padding: 10px; font-weight: 500;">${work.title}</td>
+                <td style="padding: 10px;">${work.category}</td>
+                <td style="padding: 10px;">
+                    <div style="display: flex; gap: 8px;">
+                      <button type="button" class="edit-btn" data-id="${work.id}" style="padding: 5px 12px; background: #eee; border: none; cursor: pointer; border-radius: 4px;">編輯</button>
+                      <button type="button" class="delete-btn" data-id="${work.id}" style="padding: 5px 12px; background: #ffebeb; color: #d00; border: none; cursor: pointer; border-radius: 4px;">刪除</button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
 };
 
 const setupLoginListeners = (vm) => {
@@ -441,12 +489,30 @@ const setupAdminListeners = (vm) => {
             </tr>
         `).join('');
 
-    // Attach delegated listeners or direct ones
-    tbody.querySelectorAll('.edit-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+    // Event Delegation for Table Buttons
+    tbody.addEventListener('click', (e) => {
+      const deleteBtn = e.target.closest('.delete-btn');
+      const editBtn = e.target.closest('.edit-btn');
+
+      if (deleteBtn) {
         e.preventDefault();
-        const id = e.currentTarget.dataset.id;
-        console.log('Editing ID:', id);
+        e.stopPropagation();
+        const id = deleteBtn.dataset.id;
+        console.log('[View] Delete clicked for ID:', id);
+
+        if (confirm('確定要永久刪除呢個作品嗎？')) {
+          console.log('[View] User confirmed delete for:', id);
+          vm.deleteWork(id);
+        } else {
+          console.log('[View] User cancelled delete for:', id);
+        }
+      }
+
+      if (editBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        const id = editBtn.dataset.id;
+        console.log('[View] Edit clicked for ID:', id);
         const work = vm.works.find(w => w.id.toString() === id.toString());
         if (work) {
           document.getElementById('work-id').value = work.id;
@@ -461,23 +527,7 @@ const setupAdminListeners = (vm) => {
           document.querySelector('#work-form button[type="submit"]').textContent = '更新作品';
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-      });
-    });
-
-    tbody.querySelectorAll('.delete-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const id = e.currentTarget.dataset.id;
-        console.log('View request delete for ID:', id);
-
-        if (confirm('確定要永久刪除呢個作品嗎？')) {
-          console.log('User confirmed delete for:', id);
-          vm.deleteWork(id);
-        } else {
-          console.log('User cancelled delete for:', id);
-        }
-      });
+      }
     });
   }
 };
@@ -578,15 +628,15 @@ const setupEventListeners = () => {
   });
 };
 
-const updateHomeBackground = (imageUrl, videoUrl) => {
+const updateHomeBackground = (imageUrl, videoUrl, onEnd = null) => {
   const container = document.getElementById('home-bg-layer');
   if (!container) return;
 
-  // 清除舊的動態背景
+  if (carouselInterval) clearInterval(carouselInterval);
+
   const existingDynamic = document.getElementById('dynamic-bg');
   const baseVideo = document.getElementById('base-video');
 
-  // 如果是背景輪播切換，我們希望平滑一點
   if (videoUrl || imageUrl) {
     const nextMedia = videoUrl ? document.createElement('video') : document.createElement('img');
     nextMedia.id = 'dynamic-bg';
@@ -596,23 +646,32 @@ const updateHomeBackground = (imageUrl, videoUrl) => {
       nextMedia.src = videoUrl;
       nextMedia.autoplay = true;
       nextMedia.muted = true;
-      nextMedia.loop = true;
       nextMedia.playsinline = true;
+      // 用戶要求播放到 End Time，所以不 loop
+      nextMedia.loop = false;
+
+      if (onEnd) {
+        nextMedia.addEventListener('ended', onEnd, { once: true });
+      }
     } else {
       nextMedia.src = imageUrl;
+      // 圖片則使用 4s 輪換
+      if (onEnd) {
+        carouselInterval = setTimeout(onEnd, 4000);
+      }
     }
 
     container.appendChild(nextMedia);
 
-    // 強制回流再加 active 類觸發淡入
     setTimeout(() => {
       nextMedia.classList.add('active');
       if (existingDynamic) existingDynamic.classList.remove('active');
       if (baseVideo) baseVideo.classList.remove('active');
 
-      // 清理舊的
       setTimeout(() => {
-        existingDynamic?.remove();
+        if (existingDynamic && existingDynamic.parentNode === container) {
+          existingDynamic.remove();
+        }
       }, 800);
     }, 50);
   }
