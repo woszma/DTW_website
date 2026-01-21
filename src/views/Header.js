@@ -39,8 +39,8 @@ export const Header = (vm) => {
           
           <div class="mobile-contact-info">
             <p class="contact-label">CONTACT US</p>
-            <a href="https://wa.me/85212345678" target="_blank" class="contact-item">WHATSAPP</a>
-            <a href="mailto:info@dtw.com" class="contact-item">EMAIL</a>
+            <a href="https://wa.me/85260931637" target="_blank" class="contact-item">WHATSAPP</a>
+            <a href="mailto:diptowhiteproduction@gmail.com" class="contact-item">EMAIL</a>
           </div>
         </div>
       </div>

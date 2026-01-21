@@ -128,8 +128,8 @@ body:not(.is-home) .logo-img {
 }
 
 .main-header.menu-open .menu-toggle span {
-  background-color: var(--text-color);
-  /* Ensure visibility on open */
+  background-color: #000 !important;
+  /* Force dark color on white background */
 }
 
 /* Mobile Menu Overlay */
@@ -388,6 +388,8 @@ body:not(.is-home) .logo-img {
   transition: opacity 0.8s ease-in-out;
   transform: scale(1.05);
   /* 初始稍微放大一點 */
+  pointer-events: none;
+  /* 防止手機點擊觸發原生播放器 */
 }
 
 .home-bg-media.active {

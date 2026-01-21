@@ -13,6 +13,7 @@ export const Home = (vm) => {
           muted 
           loop 
           playsinline
+          webkit-playsinline
         >
           <source src="${base}/Videos/Background_Video/網站主頁_1.mp4" type="video/mp4">
         </video>
