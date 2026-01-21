@@ -436,6 +436,8 @@ const setupAdminListeners = (vm) => {
     form.reset();
     document.getElementById('work-id').value = '';
     document.querySelector('#work-form button[type="submit"]').textContent = '保存作品';
+    const preview = document.getElementById('existing-images-preview');
+    if (preview) preview.innerHTML = '';
   });
 
   document.getElementById('clear-images-btn')?.addEventListener('click', async () => {
@@ -448,6 +450,8 @@ const setupAdminListeners = (vm) => {
     if (confirm('確定要清空呢個作品嘅所有額外相片嗎？')) {
       try {
         await vm.updateWork(workId, { images: [] });
+        const preview = document.getElementById('existing-images-preview');
+        if (preview) preview.innerHTML = '';
         alert('額外相片已清空！');
       } catch (err) {
         alert('清空失敗: ' + err.message);
@@ -522,6 +526,18 @@ const setupAdminListeners = (vm) => {
           document.getElementById('work-description').value = work.description || '';
           document.getElementById('work-thumbnail-url').value = work.thumbnail;
           document.getElementById('work-media-url').value = work.mediaUrl || '';
+
+          // 顯示現有額外相片
+          const previewContainer = document.getElementById('existing-images-preview');
+          if (previewContainer && work.images) {
+            previewContainer.innerHTML = work.images.map(img => `
+              <div style="position: relative;">
+                <img src="${vm.fixPath(img)}" style="width: 60px; height: 60px; object-fit: cover; border: 1px solid #ddd; border-radius: 4px;" />
+              </div>
+            `).join('');
+          } else if (previewContainer) {
+            previewContainer.innerHTML = '';
+          }
 
           document.querySelector('#work-form button[type="submit"]').textContent = '更新作品';
           window.scrollTo({ top: 0, behavior: 'smooth' });
