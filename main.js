@@ -23,51 +23,12 @@ const fixPath = (path) => {
   return base + cleanPath;
 };
 
-// 初始化數據
-const photographyWorks = [
-  new Work(1, 'Family Moments', 'editorial', 2024, 'https://images.unsplash.com/photo-1549417229-aa67d3263c91?auto=format&fit=crop&w=1200&q=80', 'A serene family moment in nature.', 'photography', 'https://assets.mixkit.co/videos/preview/mixkit-mother-with-her-little-daughter-playing-in-a-field-of-flowers-34281-large.mp4'),
-  new Work(2, 'Urban Lines', 'advertising', 2025, 'https://images.unsplash.com/photo-1449156006071-8219323f462a?auto=format&fit=crop&w=1200&q=80', 'Geometric urban architecture.', 'photography', 'https://assets.mixkit.co/videos/preview/mixkit-top-view-of-a-busy-city-street-4252-large.mp4'),
-  new Work(3, 'Portrait Study', 'portrait', 2023, 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1200&q=80', 'Intimate film portrait.', 'photography', 'https://assets.mixkit.co/videos/preview/mixkit-slow-motion-of-a-woman-smiling-in-a-field-34286-large.mp4')
-];
-
-// 重複一些數據以填滿網格
-const photography = [...photographyWorks, ...photographyWorks, ...photographyWorks, ...photographyWorks];
-
-// 實際讀取用戶設計作品
-const designWorks = [
-  // Event_Exhibition_Installation
-  new Work(101, 'Installation 01', 'Event_Exhibition_Installation', 2025, 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1200&q=80', '', 'design', 'https://assets.mixkit.co/videos/preview/mixkit-blue-and-red-lights-on-a-concert-4017-large.mp4'),
-  new Work(102, 'Installation 02', 'Event_Exhibition_Installation', 2025, fixPath('/images/Design_portfolio/Event_Exhibition_Installation/Event_Exhibition_Installation00002.jpg'), '', 'design'),
-  new Work(103, 'Installation 03', 'Event_Exhibition_Installation', 2025, fixPath('/images/Design_portfolio/Event_Exhibition_Installation/Event_Exhibition_Installation00003.jpg'), '', 'design'),
-  new Work(104, 'Installation 04', 'Event_Exhibition_Installation', 2025, fixPath('/images/Design_portfolio/Event_Exhibition_Installation/Event_Exhibition_Installation00004.jpg'), '', 'design'),
-  new Work(105, 'Installation 05', 'Event_Exhibition_Installation', 2025, fixPath('/images/Design_portfolio/Event_Exhibition_Installation/Event_Exhibition_Installation00005.jpg'), '', 'design'),
-
-  // Multimedia
-  new Work(201, 'Multimedia 01', 'Multimedia', 2024, fixPath('/images/Design_portfolio/Multimedia/Multimedia00001.jpg'), '', 'design'),
-  new Work(202, 'Multimedia 02', 'Multimedia', 2024, fixPath('/images/Design_portfolio/Multimedia/Multimedia00002.jpg'), '', 'design'),
-  new Work(203, 'Multimedia 03', 'Multimedia', 2024, fixPath('/images/Design_portfolio/Multimedia/Multimedia00003.png'), '', 'design'),
-
-  // Printing Materials
-  new Work(301, 'Print 01', 'Printing Materials', 2024, fixPath('/images/Design_portfolio/Printing Materials/Printing Materials00001.jpeg'), '', 'design'),
-  new Work(302, 'Print 02', 'Printing Materials', 2024, fixPath('/images/Design_portfolio/Printing Materials/Printing Materials00002.jpg'), '', 'design'),
-  new Work(303, 'Print 03', 'Printing Materials', 2024, fixPath('/images/Design_portfolio/Printing Materials/Printing Materials00003.png'), '', 'design'),
-  new Work(304, 'Print 04', 'Printing Materials', 2024, fixPath('/images/Design_portfolio/Printing Materials/Printing Materials00004.jpg'), '', 'design'),
-  new Work(305, 'Print 05', 'Printing Materials', 2024, fixPath('/images/Design_portfolio/Printing Materials/Printing Materials00005.jpg'), '', 'design'),
-
-  // Souvenir
-  new Work(401, 'Souvenir 01', 'Souvenir', 2024, fixPath('/images/Design_portfolio/Souvenir/Souvenir00001.jpg'), '', 'design'),
-  new Work(402, 'Souvenir 02', 'Souvenir', 2024, fixPath('/images/Design_portfolio/Souvenir/Souvenir00002.jpeg'), '', 'design'),
-  new Work(403, 'Souvenir 03', 'Souvenir', 2024, fixPath('/images/Design_portfolio/Souvenir/Souvenir00003.jpg'), '', 'design'),
-  new Work(404, 'Souvenir 04', 'Souvenir', 2024, fixPath('/images/Design_portfolio/Souvenir/Souvenir00004.jpg'), '', 'design'),
-  new Work(405, 'Souvenir 05', 'Souvenir', 2024, fixPath('/images/Design_portfolio/Souvenir/Souvenir00005.jpg'), '', 'design')
-];
-
-// 實讀取用戶錄像作品
-const videoWorks = [
-  new Work(501, 'Commercial 01', 'Commercial', 2025, 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1200&q=80', 'High-end commercial video.', 'video', fixPath('/Videos/Theme_Clip/活動花䋈/A.mp4')),
-  new Work(502, 'Short Film 01', 'Short Film', 2024, 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1200&q=80', 'Artistic short film.', 'video', fixPath('/Videos/Theme_Clip/人物故事/A.mp4')),
-  new Work(503, 'Documentary 01', 'Documentary', 2024, 'https://images.unsplash.com/photo-1449156006071-8219323f462a?auto=format&fit=crop&w=1200&q=80', 'Nature documentary.', 'video', fixPath('/Videos/Theme_Clip/特別主題/A.mp4'))
-];
+// 初始化數據 - 所有作品將從 Firebase 加載
+// 示範數據已移除，請通過 Admin 後台上傳作品
+const photographyWorks = [];
+const photography = [];
+const designWorks = [];
+const videoWorks = [];
 
 // 背景视频列表
 const backgroundVideos = [
@@ -169,16 +130,12 @@ const stopCarousel = () => {
   if (carouselInterval) clearInterval(carouselInterval);
 };
 
-const vm = new WorksViewModel([...photography, ...designWorks, ...videoWorks]);
+const vm = new WorksViewModel([]);
 
 // Preload resources function
 const preloadResources = async () => {
-  const images = [
-    // Add critical images to preload here
-    ...photographyWorks.map(w => w.thumbnail),
-    ...designWorks.slice(0, 5).map(w => w.thumbnail),
-    ...videoWorks.map(w => w.thumbnail)
-  ];
+  // 由於示範數據已移除，只預加載背景視頻
+  const images = [];
 
   const loadImage = (src) => {
     return new Promise((resolve) => {
