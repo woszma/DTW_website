@@ -106,7 +106,9 @@ const startCarousel = (theme = null) => {
     currentLibrary = themeVideoLibraries[theme];
     currentVideoIndex = 0;
   } else {
-    currentLibrary = backgroundVideos;
+    // 預設背景：結合預設影片 + 作品縮圖
+    const workImages = vm.works.filter(w => w.thumbnail).map(w => w.thumbnail);
+    currentLibrary = [...backgroundVideos, ...workImages];
   }
 
   const nextSlide = () => {
@@ -243,8 +245,10 @@ const render = () => {
       const homeContainer = document.createElement('div');
       homeContainer.innerHTML = Home(vm);
       document.body.appendChild(homeContainer.firstElementChild);
+      startCarousel();
+    } else if (isPageChanged) {
+      startCarousel();
     }
-    startCarousel();
   } else {
     document.body.classList.remove('is-home');
     stopCarousel();
@@ -747,11 +751,13 @@ const updateHomeBackground = (imageUrl, videoUrl, onEnd = null) => {
       nextMedia.autoplay = true;
       nextMedia.muted = true;
       nextMedia.playsinline = true;
-      // 用戶要求播放到 End Time，所以不 loop
+      nextMedia.setAttribute('webkit-playsinline', 'true');
       nextMedia.loop = false;
 
       if (onEnd) {
         nextMedia.addEventListener('ended', onEnd, { once: true });
+        // 安全機制：如果影片 15 秒仲未完或者卡住，自動去下一個 (預防手機版 Ended Event 唔觸發)
+        carouselInterval = setTimeout(onEnd, 15000);
       }
     } else {
       nextMedia.src = imageUrl;
