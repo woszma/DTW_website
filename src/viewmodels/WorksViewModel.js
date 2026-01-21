@@ -214,18 +214,67 @@ export class WorksViewModel {
     }
   }
 
+  async compressImage(file, maxWidth = 1920, quality = 0.8) {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          let width = img.width;
+          let height = img.height;
+
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, width, height);
+
+          canvas.toBlob(
+            (blob) => {
+              const compressedFile = new File([blob], file.name, {
+                type: "image/jpeg",
+                lastModified: Date.now(),
+              });
+              resolve(compressedFile);
+            },
+            "image/jpeg",
+            quality
+          );
+        };
+      };
+    });
+  }
+
   async uploadFile(file) {
     if (!file) return null;
 
-    // 檔案大小檢查 (例如建議唔好超過 5MB)
-    const MAX_SIZE = 5 * 1024 * 1024; // 5MB
-    if (file.size > MAX_SIZE) {
-      const proceed = confirm(`呢個 File 有 ${(file.size / (1024 * 1024)).toFixed(2)}MB，對網頁背景嚟講可能太重。建議你先用 Workflow 進行壓縮。仲要繼續上傳嗎？`);
+    let fileToUpload = file;
+    const isImage = file.type.startsWith('image/');
+    const isVideo = file.type.startsWith('video/');
+
+    // 自動壓縮圖片 (如果超過 2MB)
+    if (isImage && file.size > 2 * 1024 * 1024) {
+      console.log(`[VM] Image too large (${(file.size / 1024 / 1024).toFixed(2)}MB). Compressing...`);
+      fileToUpload = await this.compressImage(file);
+      console.log(`[VM] Compression complete. New size: ${(fileToUpload.size / 1024 / 1024).toFixed(2)}MB`);
+    }
+
+    // 影片大檔案檢查 (Canvas 唔支援影片壓縮，所以依然顯示提示)
+    const MAX_VIDEO_SIZE = 10 * 1024 * 1024; // 10MB
+    if (isVideo && file.size > MAX_VIDEO_SIZE) {
+      const proceed = confirm(`呢個影片 File 有 ${(file.size / (1024 * 1024)).toFixed(2)}MB，對網頁背景嚟講可能太重。建議你先跟隨流程進行壓縮。仲要繼續上傳嗎？`);
       if (!proceed) return null;
     }
 
-    const storageRef = ref(storage, 'uploads/' + new Date().getTime() + '_' + file.name);
-    await uploadBytes(storageRef, file);
+    const storageRef = ref(storage, 'uploads/' + new Date().getTime() + '_' + fileToUpload.name);
+    await uploadBytes(storageRef, fileToUpload);
     return await getDownloadURL(storageRef);
   }
 
