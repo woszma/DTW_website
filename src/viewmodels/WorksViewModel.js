@@ -130,17 +130,26 @@ export class WorksViewModel {
   }
 
   async deleteWork(workId) {
-    if (!confirm('確定要刪除呢個作品嗎？')) return;
+    console.log('VM actual delete started for:', workId);
     try {
       // 嘗試從 Firestore 刪除 (如果是 Firestore 項目)
-      await deleteDoc(doc(db, "works", workId.toString()));
+      // 注意：即使 Firestore 刪除失敗或找不到文檔，我們也應該更新本地狀態（如果是 Hardcoded 項目）
+      try {
+        await deleteDoc(doc(db, "works", workId.toString()));
+        console.log('Firestore delete successful for:', workId);
+      } catch (fsErr) {
+        console.warn("Firestore delete issue (might be hardcoded):", fsErr);
+      }
 
-      // 更新本地狀態，確保 ID 類型不匹配時也能正確 Filter (統一轉 String 比較)
+      // 更新本地狀態
+      const initialCount = this.works.length;
       this.works = this.works.filter(w => w.id.toString() !== workId.toString());
+      console.log('Local works after filter. Previous count:', initialCount, 'New count:', this.works.length);
+
       this.updateFilteredWorks();
       this.notify();
     } catch (e) {
-      console.error("Error deleting work:", e);
+      console.error("Error in deleteWork process:", e);
     }
   }
 
@@ -185,11 +194,19 @@ export class WorksViewModel {
       querySnapshot.forEach((doc) => {
         fetchedWorks.push({ ...doc.data(), id: doc.id });
       });
-      // 將 Firebase 數據與硬編碼數據合併
-      // 我們按時間倒序排列，新加的在前面
-      this.works = [...fetchedWorks, ...this.works];
+
+      // 過濾掉本地已經存在的 Firestore 作品 (避免重複)
+      // 同時保留本地硬編碼作品
+      const hardcodedWorks = this.works.filter(w => {
+        // 假設硬編碼 ID 都是數字或短字串，Firestore ID 是長字串
+        // 另一種方法係 check 佢係咪喺 fetchedWorks 已經出現過
+        return !fetchedWorks.some(fw => fw.id.toString() === w.id.toString());
+      });
+
+      this.works = [...fetchedWorks, ...hardcodedWorks];
       this.updateFilteredWorks();
       this.notify();
+      console.log('Data synced. Total works:', this.works.length);
     } catch (e) {
       console.error("Error fetching works: ", e);
     }

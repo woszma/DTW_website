@@ -1,11 +1,11 @@
 export const Header = (vm) => {
   const base = (import.meta.env.BASE_URL || '/').replace(/\/$/, '');
-  const categories = vm.mainType === 'photography' 
+  const categories = vm.mainType === 'photography'
     ? ['all', 'advertising', 'editorial', 'video', 'portrait', 'other']
     : vm.mainType === 'design'
-    ? ['all', 'Event_Exhibition_Installation', 'Multimedia', 'Printing Materials', 'Souvenir']
-    : ['all', 'Commercial', 'Short Film', 'Documentary', 'Other'];
-  
+      ? ['all', 'Event_Exhibition_Installation', 'Multimedia', 'Printing Materials', 'Souvenir']
+      : ['all', 'Commercial', 'Short Film', 'Documentary', 'Other'];
+
   const isHome = vm.currentPage === 'home';
 
   return `
@@ -33,25 +33,24 @@ export const Header = (vm) => {
       
       ${!isHome ? `
       <nav class="category-nav" id="category-nav">
-        <div class="category-lists">
+        <div class="category-row">
           <ul class="cat-list">
             ${categories.map(cat => `
               <li><a href="#" class="filter-link ${vm.currentCategory === cat ? 'active' : ''}" data-category="${cat}">${cat}</a></li>
             `).join('')}
           </ul>
+          
+          <div class="type-switch">
+            <a href="#" class="main-type-link ${vm.mainType === 'photography' ? 'active' : ''}" data-type="photography">PHOTOGRAPHY</a>
+            <span class="nav-divider">/</span>
+            <a href="#" class="main-type-link ${vm.mainType === 'design' ? 'active' : ''}" data-type="design">DESIGN</a>
+            <span class="nav-divider">/</span>
+            <a href="#" class="main-type-link ${vm.mainType === 'video' ? 'active' : ''}" data-type="video">VIDEO</a>
+          </div>
         </div>
         
         <div class="view-controls">
-          <div class="view-meta">
-            <div class="type-switch">
-              <a href="#" class="main-type-link ${vm.mainType === 'photography' ? 'active' : ''}" data-type="photography">PHOTOGRAPHY</a>
-              <span class="nav-divider">/</span>
-              <a href="#" class="main-type-link ${vm.mainType === 'design' ? 'active' : ''}" data-type="design">DESIGN</a>
-              <span class="nav-divider">/</span>
-              <a href="#" class="main-type-link ${vm.mainType === 'video' ? 'active' : ''}" data-type="video">VIDEO</a>
-            </div>
-            <span class="view-count">${vm.filteredWorks.length} items</span>
-          </div>
+          <span class="view-count">${vm.filteredWorks.length} items</span>
           <div class="mode-switch">
              <a href="#" id="grid-mode" class="${vm.viewMode === 'grid' ? 'active' : ''}">GRID</a>
              <span class="nav-divider">/</span>

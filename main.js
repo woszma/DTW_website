@@ -467,9 +467,16 @@ const setupAdminListeners = (vm) => {
     tbody.querySelectorAll('.delete-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
+        e.stopPropagation();
         const id = e.currentTarget.dataset.id;
-        console.log('Deleting ID:', id);
-        vm.deleteWork(id);
+        console.log('View request delete for ID:', id);
+
+        if (confirm('確定要永久刪除呢個作品嗎？')) {
+          console.log('User confirmed delete for:', id);
+          vm.deleteWork(id);
+        } else {
+          console.log('User cancelled delete for:', id);
+        }
       });
     });
   }
