@@ -1,10 +1,6 @@
 export const Header = (vm) => {
   const base = (import.meta.env.BASE_URL || '/').replace(/\/$/, '');
-  const categories = vm.mainType === 'photography'
-    ? ['all', 'advertising', 'editorial', 'video', 'portrait', 'other']
-    : vm.mainType === 'design'
-      ? ['all', 'Event_Exhibition_Installation', 'Multimedia', 'Printing Materials', 'Souvenir']
-      : ['all', 'Commercial', 'Short Film', 'Documentary', 'Other'];
+  const categories = vm.getCategories();
 
   const isHome = vm.currentPage === 'home';
 
@@ -33,20 +29,22 @@ export const Header = (vm) => {
       
       ${!isHome ? `
       <nav class="category-nav" id="category-nav">
-        <div class="category-row">
-          <ul class="cat-list">
-            ${categories.map(cat => `
-              <li><a href="#" class="filter-link ${vm.currentCategory === cat ? 'active' : ''}" data-category="${cat}">${cat}</a></li>
-            `).join('')}
-          </ul>
-          
+        <div class="filter-group">
           <div class="type-switch">
             <a href="#" class="main-type-link ${vm.mainType === 'photography' ? 'active' : ''}" data-type="photography">PHOTOGRAPHY</a>
             <span class="nav-divider">/</span>
             <a href="#" class="main-type-link ${vm.mainType === 'design' ? 'active' : ''}" data-type="design">DESIGN</a>
             <span class="nav-divider">/</span>
             <a href="#" class="main-type-link ${vm.mainType === 'video' ? 'active' : ''}" data-type="video">VIDEO</a>
+            <span class="nav-divider">/</span>
+            <a href="#" class="main-type-link ${vm.mainType === 'all' ? 'active' : ''}" data-type="all">ALL</a>
           </div>
+          
+          <ul class="cat-list">
+            ${categories.map(cat => `
+              <li><a href="#" class="filter-link ${vm.currentCategory === cat ? 'active' : ''}" data-category="${cat}">${cat}</a></li>
+            `).join('')}
+          </ul>
         </div>
         
         <div class="view-controls">

@@ -122,32 +122,28 @@ body:not(.is-home) .logo-img {
 /* Navigation Styles */
 .category-nav {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: flex-end;
   font-size: 11px;
   text-transform: lowercase;
-  gap: 40px;
+  gap: 60px;
 }
 
-.category-row {
+.filter-group {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: flex-end;
   flex: 1;
-  gap: 40px;
+  gap: 20px;
   border-bottom: 1px solid #eee;
-  padding-bottom: 15px;
-}
-
-.category-lists {
-  display: flex;
-  gap: 60px;
+  padding-bottom: 20px;
 }
 
 .cat-list {
   display: flex;
   gap: 20px;
   flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .filter-link {

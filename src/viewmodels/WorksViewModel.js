@@ -72,11 +72,35 @@ export class WorksViewModel {
   }
 
   updateFilteredWorks() {
-    let results = this.works.filter(work => work.mainType === this.mainType);
+    let results = this.mainType === 'all'
+      ? this.works
+      : this.works.filter(work => work.mainType === this.mainType);
+
     if (this.currentCategory !== 'all') {
-      results = results.filter(work => work.category === this.currentCategory);
+      results = results.filter(work => (work.category || 'other') === this.currentCategory);
     }
     this.filteredWorks = results;
+  }
+
+  getCategories() {
+    const worksToScan = this.mainType === 'all'
+      ? this.works
+      : this.works.filter(work => work.mainType === this.mainType);
+
+    const rawCategories = worksToScan.map(work => work.category || 'other');
+    const uniqueCategories = [...new Set(rawCategories)];
+
+    // 'all' 永遠喺最前，'other' 永遠喺最後
+    let final = ['all'];
+    const middle = uniqueCategories.filter(c => c !== 'all' && c !== 'other');
+    middle.sort(); // 字母排序中間嘅標籤
+    final.push(...middle);
+
+    if (!final.includes('other')) {
+      final.push('other');
+    }
+
+    return final;
   }
 
   subscribe(listener) {
