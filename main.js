@@ -404,13 +404,14 @@ const setupAdminListeners = (vm) => {
       };
 
       if (workId) {
-        // For updates, we might want to keep existing images if no new ones are uploaded
-        // This is a simple implementation; a full CRM would allow managing the array.
+        // Append new images to existing ones instead of replacing
         const existingWork = vm.works.find(w => w.id.toString() === workId.toString());
+        let currentImages = (existingWork && existingWork.images) ? [...existingWork.images] : [];
+
         if (extraImages.length > 0) {
-          workData.images = extraImages;
-        } else if (existingWork && existingWork.images) {
-          workData.images = existingWork.images;
+          workData.images = [...currentImages, ...extraImages];
+        } else {
+          workData.images = currentImages;
         }
 
         await vm.updateWork(workId, workData);
@@ -435,6 +436,23 @@ const setupAdminListeners = (vm) => {
     form.reset();
     document.getElementById('work-id').value = '';
     document.querySelector('#work-form button[type="submit"]').textContent = '保存作品';
+  });
+
+  document.getElementById('clear-images-btn')?.addEventListener('click', async () => {
+    const workId = document.getElementById('work-id').value;
+    if (!workId) {
+      alert('請先選擇一個現有作品進行編輯。');
+      return;
+    }
+
+    if (confirm('確定要清空呢個作品嘅所有額外相片嗎？')) {
+      try {
+        await vm.updateWork(workId, { images: [] });
+        alert('額外相片已清空！');
+      } catch (err) {
+        alert('清空失敗: ' + err.message);
+      }
+    }
   });
 
   // Populate table

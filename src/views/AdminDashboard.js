@@ -64,8 +64,11 @@ export const AdminDashboard = (vm) => {
 
           <div>
             <label>額外相片 (可多選)</label>
-            <input type="file" id="work-images-files" multiple accept="image/*">
-            <p style="font-size: 10px; opacity: 0.6; margin-top: 5px;">(呢度上傳嘅相會顯示喺詳情彈窗入面)</p>
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <input type="file" id="work-images-files" multiple accept="image/*">
+              <button type="button" id="clear-images-btn" style="padding: 4px 8px; font-size: 10px; background: #ffebeb; color: #d00; border: 1px solid #ffcccc; cursor: pointer;">清空現有相片</button>
+            </div>
+            <p style="font-size: 10px; opacity: 0.6; margin-top: 5px;">(呢度上傳嘅相會自動追加，點擊「清空」可重設)</p>
           </div>
 
           <div>
