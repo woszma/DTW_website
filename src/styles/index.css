@@ -283,6 +283,7 @@ body:not(.is-home) .logo-img {
   width: 100%;
   height: 100%;
   object-fit: cover; /* 重要：保持填滿 */
+  z-index: 1;
   opacity: 0;
   transition: opacity 0.8s ease-in-out;
   transform: scale(1.05); /* 初始稍微放大一點 */
@@ -309,6 +310,7 @@ body:not(.is-home) .logo-img {
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.2);
+  z-index: 2;
 }
 
 .home-content {

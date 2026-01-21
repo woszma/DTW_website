@@ -1,10 +1,10 @@
 export class Work {
-  constructor(id, title, category, year, imageUrl, description, mainType = 'photography', videoUrl = null) {
+  constructor(id, title, category, year, thumbnail, description, mainType = 'photography', videoUrl = null) {
     this.id = id;
     this.title = title;
     this.category = category;
     this.year = year;
-    this.imageUrl = imageUrl;
+    this.thumbnail = thumbnail;
     this.videoUrl = videoUrl;
     this.description = description;
     this.mainType = mainType; // 'photography' or 'design'

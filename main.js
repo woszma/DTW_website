@@ -5,13 +5,20 @@ import { WorksGrid } from './src/views/WorksGrid.js';
 import { Home } from './src/views/Home.js';
 import { About } from './src/views/About.js';
 import { Services } from './src/views/Services.js';
+import { Loading } from './src/views/Loading.js';
+import { AdminLogin } from './src/views/AdminLogin.js';
+import { AdminDashboard } from './src/views/AdminDashboard.js';
+
+// State for loading
+let isLoading = true;
 
 // 資源路徑修復工具
 const fixPath = (path) => {
-  if (!path || path.startsWith('http')) return path;
+  if (!path || path.startsWith('http') || path.startsWith('data:')) return path;
+  const base = (import.meta.env.BASE_URL || '/').replace(/\/$/, '');
+  if (base && path.startsWith(base)) return path;
   let cleanPath = path.replace(/^\/public\//, '/');
   if (!cleanPath.startsWith('/')) cleanPath = '/' + cleanPath;
-  const base = (import.meta.env.BASE_URL || '/').replace(/\/$/, '');
   return base + cleanPath;
 };
 
@@ -33,19 +40,19 @@ const designWorks = [
   new Work(103, 'Installation 03', 'Event_Exhibition_Installation', 2025, fixPath('/images/Design_portfolio/Event_Exhibition_Installation/Event_Exhibition_Installation00003.jpg'), '', 'design'),
   new Work(104, 'Installation 04', 'Event_Exhibition_Installation', 2025, fixPath('/images/Design_portfolio/Event_Exhibition_Installation/Event_Exhibition_Installation00004.jpg'), '', 'design'),
   new Work(105, 'Installation 05', 'Event_Exhibition_Installation', 2025, fixPath('/images/Design_portfolio/Event_Exhibition_Installation/Event_Exhibition_Installation00005.jpg'), '', 'design'),
-  
+
   // Multimedia
   new Work(201, 'Multimedia 01', 'Multimedia', 2024, fixPath('/images/Design_portfolio/Multimedia/Multimedia00001.jpg'), '', 'design'),
   new Work(202, 'Multimedia 02', 'Multimedia', 2024, fixPath('/images/Design_portfolio/Multimedia/Multimedia00002.jpg'), '', 'design'),
   new Work(203, 'Multimedia 03', 'Multimedia', 2024, fixPath('/images/Design_portfolio/Multimedia/Multimedia00003.png'), '', 'design'),
-  
+
   // Printing Materials
   new Work(301, 'Print 01', 'Printing Materials', 2024, fixPath('/images/Design_portfolio/Printing Materials/Printing Materials00001.jpeg'), '', 'design'),
   new Work(302, 'Print 02', 'Printing Materials', 2024, fixPath('/images/Design_portfolio/Printing Materials/Printing Materials00002.jpg'), '', 'design'),
   new Work(303, 'Print 03', 'Printing Materials', 2024, fixPath('/images/Design_portfolio/Printing Materials/Printing Materials00003.png'), '', 'design'),
   new Work(304, 'Print 04', 'Printing Materials', 2024, fixPath('/images/Design_portfolio/Printing Materials/Printing Materials00004.jpg'), '', 'design'),
   new Work(305, 'Print 05', 'Printing Materials', 2024, fixPath('/images/Design_portfolio/Printing Materials/Printing Materials00005.jpg'), '', 'design'),
-  
+
   // Souvenir
   new Work(401, 'Souvenir 01', 'Souvenir', 2024, fixPath('/images/Design_portfolio/Souvenir/Souvenir00001.jpg'), '', 'design'),
   new Work(402, 'Souvenir 02', 'Souvenir', 2024, fixPath('/images/Design_portfolio/Souvenir/Souvenir00002.jpeg'), '', 'design'),
@@ -61,12 +68,14 @@ const videoWorks = [
   new Work(503, 'Documentary 01', 'Documentary', 2024, 'https://images.unsplash.com/photo-1449156006071-8219323f462a?auto=format&fit=crop&w=1200&q=80', 'Nature documentary.', 'video', fixPath('/Videos/Theme_Clip/特別主題/A.mp4'))
 ];
 
-// 背景视频列表 (移除燈泡視頻 bg_video00001.mp4)
+// 背景视频列表
 const backgroundVideos = [
-  fixPath('/Videos/Background_Video/bg_video00002.mp4'),
-  fixPath('/Videos/Background_Video/bg_video00003.mp4'),
-  fixPath('/Videos/Background_Video/bg_video00004.mp4'),
-  fixPath('/Videos/Background_Video/bg_video00005.mp4')
+  fixPath('/Videos/Background_Video/網站主頁_1.mp4'),
+  fixPath('/Videos/Background_Video/網站主頁_2.mp4'),
+  fixPath('/Videos/Background_Video/網站主頁_3.mp4'),
+  fixPath('/Videos/Background_Video/網站主頁_4.mp4'),
+  fixPath('/Videos/Background_Video/網站主頁_5.mp4'),
+  fixPath('/Videos/Background_Video/網站主頁_6.mp4')
 ];
 
 // 主題素材庫 (支持混合視頻與圖片)
@@ -128,7 +137,7 @@ const isImage = (path) => {
 
 const startCarousel = (theme = null) => {
   if (carouselInterval) clearInterval(carouselInterval);
-  
+
   if (theme && themeVideoLibraries[theme]) {
     currentLibrary = themeVideoLibraries[theme];
     currentVideoIndex = 0;
@@ -159,13 +168,107 @@ const stopCarousel = () => {
 
 const vm = new WorksViewModel([...photography, ...designWorks, ...videoWorks]);
 
+// Preload resources function
+const preloadResources = async () => {
+  const images = [
+    // Add critical images to preload here
+    ...photographyWorks.map(w => w.thumbnail),
+    ...designWorks.slice(0, 5).map(w => w.thumbnail),
+    ...videoWorks.map(w => w.thumbnail)
+  ];
+
+  const loadImage = (src) => {
+    return new Promise((resolve) => {
+      if (!src) resolve();
+      const img = new Image();
+      img.src = src;
+      img.onload = resolve;
+      img.onerror = resolve; // Continue even if error
+    });
+  };
+
+  const loadVideo = (src, timeout = 10000) => {
+    return new Promise((resolve) => {
+      if (!src) {
+        resolve();
+        return;
+      }
+
+      const video = document.createElement('video');
+      video.src = src;
+      video.preload = 'auto';
+
+      let resolved = false;
+      const done = () => {
+        if (!resolved) {
+          resolved = true;
+          // Clean up to avoid memory leaks if not used immediately
+          video.oncanplaythrough = null;
+          video.onerror = null;
+          resolve();
+        }
+      };
+
+      video.oncanplaythrough = done;
+      video.onerror = done;
+
+      // Force load
+      video.load();
+
+      // Timeout fallback
+      setTimeout(done, timeout);
+    });
+  };
+
+  try {
+    // 1. Start loading images in parallel
+    const imagePromises = images.map(img => loadImage(img));
+
+    // 2. Prioritize the first background video for the immediate "Wow" factor
+    // We wait for it to be playable through to avoid choppiness ("斷斷續續")
+    const firstVideo = backgroundVideos[0];
+    if (firstVideo) {
+      await loadVideo(firstVideo);
+    }
+
+    // 3. Wait for images (usually faster than video anyway)
+    await Promise.all(imagePromises);
+
+    // Artificial delay for smooth UX if loading is too fast (min 1 sec)
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+  } catch (e) {
+    console.warn("Preloading error:", e);
+  } finally {
+    isLoading = false;
+    render();
+  }
+};
+
 const render = () => {
-  const headerRoot = document.getElementById('header-root');
-  const appRoot = document.getElementById('app-root');
-  
+  let headerRoot = document.getElementById('header-root');
+  let appRoot = document.getElementById('app-root');
+
+  if (isLoading) {
+    document.body.innerHTML = Loading();
+    return;
+  } else {
+    // Restore body structure if it was replaced by Loading
+    if (!document.getElementById('header-root')) {
+      document.body.innerHTML = `
+            <div id="header-root"></div>
+            <main id="app-root" class="container"></main>
+            <div id="footer-root"></div>
+         `;
+      // Re-get references
+      headerRoot = document.getElementById('header-root');
+      appRoot = document.getElementById('app-root');
+    }
+  }
+
   // 始終渲染 Header
   headerRoot.innerHTML = Header(vm);
-  
+
   // 更新 Body Class 以適配透明 Header
   if (vm.currentPage === 'home') {
     document.body.classList.add('is-home');
@@ -190,10 +293,186 @@ const render = () => {
       appRoot.innerHTML = Services(vm);
     } else if (vm.currentPage === 'about') {
       appRoot.innerHTML = About(vm);
+    } else if (vm.currentPage === 'admin') {
+      if (vm.user) {
+        appRoot.innerHTML = AdminDashboard(vm);
+        setupAdminListeners(vm);
+      } else {
+        appRoot.innerHTML = AdminLogin(vm);
+        setupLoginListeners(vm);
+      }
     }
   }
-  
-  setupEventListeners();
+
+  // Setup listeners for standard pages
+  if (vm.currentPage !== 'admin') {
+    setupEventListeners();
+  }
+};
+
+const setupLoginListeners = (vm) => {
+  // Show warning if config seems default (we'll just toggle it based on a simple check)
+  // Since we can't easily check the config values from here without importing, 
+  // we will leave it hidden by default. The user will see auth errors if it fails.
+  const warning = document.getElementById('login-config-warning');
+  if (warning) {
+    // If we could check, we would. For now, rely on docs.
+    // warning.style.display = 'block'; 
+  }
+
+  const form = document.getElementById('admin-login-form');
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('admin-email').value;
+    const password = document.getElementById('admin-password').value;
+    const errorP = document.getElementById('login-error');
+
+    const result = await vm.login(email, password);
+    if (!result.success) {
+      errorP.textContent = "登入失敗: " + result.error;
+      errorP.style.display = 'block';
+    }
+  });
+};
+
+const setupAdminListeners = (vm) => {
+  document.getElementById('logout-btn')?.addEventListener('click', () => {
+    vm.logout();
+  });
+
+  // Form handling
+  const form = document.getElementById('work-form');
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const submitBtn = form.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.textContent = '保存中...';
+
+    // Heuristically check for default config
+    // In a real app we might want to expose this on the VM more cleanly
+    const isConfigured = vm.checkFirebaseConfig();
+    if (!isConfigured) {
+      // This likely won't be hit because checkFirebaseConfig currently returns true
+      // But we added the warning DIV in the UI already.
+    }
+
+    try {
+      const workId = document.getElementById('work-id').value;
+      const title = document.getElementById('work-title').value;
+      const year = parseInt(document.getElementById('work-year').value);
+      const mainType = document.getElementById('work-mainType').value;
+      const category = document.getElementById('work-category').value;
+      const description = document.getElementById('work-description').value;
+
+      let thumbnail = document.getElementById('work-thumbnail-url').value;
+      const thumbFile = document.getElementById('work-thumbnail-file').files[0];
+
+      if (thumbFile) {
+        thumbnail = await vm.uploadFile(thumbFile);
+      }
+
+      let mediaUrl = document.getElementById('work-media-url').value;
+      const mediaFile = document.getElementById('work-media-file').files[0];
+
+      if (mediaFile) {
+        mediaUrl = await vm.uploadFile(mediaFile);
+      }
+
+      const workData = {
+        title, year, mainType, category, description,
+        thumbnail, mediaUrl,
+        updatedAt: new Date()
+      };
+
+      if (workId) {
+        await vm.updateWork(workId, workData);
+        alert('作品已更新!');
+      } else {
+        await vm.addWork({ ...workData, createdAt: new Date() });
+        alert('作品已保存!');
+      }
+
+      form.reset();
+      document.getElementById('work-id').value = '';
+      submitBtn.textContent = '保存作品';
+    } catch (err) {
+      alert('保存失敗: ' + err.message);
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+
+  document.getElementById('reset-form-btn')?.addEventListener('click', () => {
+    form.reset();
+    document.getElementById('work-id').value = '';
+    document.querySelector('#work-form button[type="submit"]').textContent = '保存作品';
+  });
+
+  // Populate table
+  const tbody = document.getElementById('admin-works-table-body');
+
+  // Check config and show warning
+  // Note: We use a heuristic since we can't easily import the config here 
+  // without potentially breaking the build if it's missing entirely.
+  // We'll trust the user sees the yellow box if they haven't edited the file.
+  // Ideally, we'd check `auth.app.options.apiKey === "YOUR_API_KEY"` but imports are module scoped.
+  // Let's just blindly show it if the user hasn't logged in successfully? 
+  // No, let's assume if they are on AdminDashboard they are logged in.
+  // But wait, if they are logged in, config MUST be correct.
+  // So the warning is mostly useful on the LOGIN screen or if they manually bypassed auth.
+
+  // However, for the Upload functionality, we want to fail gracefully.
+
+  if (tbody) {
+    tbody.innerHTML = vm.works.map(work => `
+            <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 10px; font-size: 11px; opacity: 0.6;">${work.id}</td>
+                <td style="padding: 10px;">
+                    <img src="${fixPath(work.thumbnail)}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+                </td>
+                <td style="padding: 10px; font-weight: 500;">${work.title}</td>
+                <td style="padding: 10px;">${work.category}</td>
+                <td style="padding: 10px;">
+                    <div style="display: flex; gap: 8px;">
+                      <button type="button" class="edit-btn" data-id="${work.id}" style="padding: 5px 12px; background: #eee; border: none; cursor: pointer; border-radius: 4px;">編輯</button>
+                      <button type="button" class="delete-btn" data-id="${work.id}" style="padding: 5px 12px; background: #ffebeb; color: #d00; border: none; cursor: pointer; border-radius: 4px;">刪除</button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+
+    // Attach delegated listeners or direct ones
+    tbody.querySelectorAll('.edit-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const id = e.currentTarget.dataset.id;
+        console.log('Editing ID:', id);
+        const work = vm.works.find(w => w.id.toString() === id.toString());
+        if (work) {
+          document.getElementById('work-id').value = work.id;
+          document.getElementById('work-title').value = work.title;
+          document.getElementById('work-year').value = work.year;
+          document.getElementById('work-mainType').value = work.mainType;
+          document.getElementById('work-category').value = work.category;
+          document.getElementById('work-description').value = work.description || '';
+          document.getElementById('work-thumbnail-url').value = work.thumbnail;
+          document.getElementById('work-media-url').value = work.mediaUrl || '';
+
+          document.querySelector('#work-form button[type="submit"]').textContent = '更新作品';
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      });
+    });
+
+    tbody.querySelectorAll('.delete-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const id = e.currentTarget.dataset.id;
+        console.log('Deleting ID:', id);
+        vm.deleteWork(id);
+      });
+    });
+  }
 };
 
 const setupEventListeners = () => {
@@ -283,7 +562,7 @@ const setupEventListeners = () => {
       vm.toggleViewMode();
     }
   });
-  
+
   document.getElementById('list-mode')?.addEventListener('click', (e) => {
     e.preventDefault();
     if (vm.viewMode !== 'list') {
@@ -299,43 +578,43 @@ const updateHomeBackground = (imageUrl, videoUrl) => {
   // 清除舊的動態背景
   const existingDynamic = document.getElementById('dynamic-bg');
   const baseVideo = document.getElementById('base-video');
-  
+
   // 如果是背景輪播切換，我們希望平滑一點
   if (videoUrl || imageUrl) {
-     const nextMedia = videoUrl ? document.createElement('video') : document.createElement('img');
-     nextMedia.id = 'dynamic-bg';
-     nextMedia.className = 'home-bg-media';
-     
-     if (videoUrl) {
-       nextMedia.src = videoUrl;
-       nextMedia.autoplay = true;
-       nextMedia.muted = true;
-       nextMedia.loop = true;
-       nextMedia.playsinline = true;
-     } else {
-       nextMedia.src = imageUrl;
-     }
+    const nextMedia = videoUrl ? document.createElement('video') : document.createElement('img');
+    nextMedia.id = 'dynamic-bg';
+    nextMedia.className = 'home-bg-media';
 
-     container.appendChild(nextMedia);
-     
-     // 強制回流再加 active 類觸發淡入
-     setTimeout(() => {
-       nextMedia.classList.add('active');
-       if (existingDynamic) existingDynamic.classList.remove('active');
-       if (baseVideo) baseVideo.classList.remove('active');
-       
-       // 清理舊的
-       setTimeout(() => {
-         existingDynamic?.remove();
-       }, 800);
-     }, 50);
+    if (videoUrl) {
+      nextMedia.src = videoUrl;
+      nextMedia.autoplay = true;
+      nextMedia.muted = true;
+      nextMedia.loop = true;
+      nextMedia.playsinline = true;
+    } else {
+      nextMedia.src = imageUrl;
+    }
+
+    container.appendChild(nextMedia);
+
+    // 強制回流再加 active 類觸發淡入
+    setTimeout(() => {
+      nextMedia.classList.add('active');
+      if (existingDynamic) existingDynamic.classList.remove('active');
+      if (baseVideo) baseVideo.classList.remove('active');
+
+      // 清理舊的
+      setTimeout(() => {
+        existingDynamic?.remove();
+      }, 800);
+    }, 50);
   }
 };
 
 const resetHomeBackground = () => {
   const existingDynamic = document.getElementById('dynamic-bg');
   existingDynamic?.remove();
-  
+
   const baseVideo = document.getElementById('base-video');
   if (baseVideo) baseVideo.classList.add('active');
 };
@@ -344,4 +623,15 @@ const resetHomeBackground = () => {
 vm.subscribe(render);
 
 // 初始渲染
-document.addEventListener('DOMContentLoaded', render);
+document.addEventListener('DOMContentLoaded', () => {
+  render(); // Show loading initially
+  preloadResources(); // Start loading
+  vm.fetchWorks(); // Sync data from Firebase
+
+  // Backdoor for admin
+  window.goToAdmin = () => vm.setCurrentPage('admin');
+  // Check URL hash for admin
+  if (window.location.hash === '#admin') {
+    vm.setCurrentPage('admin');
+  }
+});

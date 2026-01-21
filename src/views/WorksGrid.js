@@ -18,7 +18,7 @@ export const WorksGrid = (vm) => {
       ${vm.filteredWorks.map(work => `
         <div class="work-item" data-id="${work.id}">
           <div class="work-image-wrapper">
-            <img src="${work.imageUrl}" alt="${work.title}" loading="lazy" />
+            <img src="${vm.fixPath(work.thumbnail)}" alt="${work.title}" loading="lazy" />
             <div class="work-overlay">
               <div class="work-info">
                 <h3>${work.title}</h3>
