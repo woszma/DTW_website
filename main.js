@@ -747,12 +747,14 @@ const updateHomeBackground = (imageUrl, videoUrl, onEnd = null) => {
     nextMedia.className = 'home-bg-media';
 
     if (videoUrl) {
-      nextMedia.src = videoUrl;
-      nextMedia.autoplay = true;
       nextMedia.muted = true;
+      nextMedia.autoplay = true;
       nextMedia.playsinline = true;
       nextMedia.setAttribute('webkit-playsinline', 'true');
+      nextMedia.setAttribute('playsinline', 'true');
+      nextMedia.disablePictureInPicture = true;
       nextMedia.loop = false;
+      nextMedia.src = videoUrl;
 
       if (onEnd) {
         nextMedia.addEventListener('ended', onEnd, { once: true });

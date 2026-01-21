@@ -79,6 +79,10 @@ export class WorksViewModel {
     if (this.currentCategory !== 'all') {
       results = results.filter(work => (work.category || 'other') === this.currentCategory);
     }
+
+    // 按年份排序 (最新在前)
+    results.sort((a, b) => (b.year || 0) - (a.year || 0));
+
     this.filteredWorks = results;
   }
 
@@ -302,6 +306,8 @@ export class WorksViewModel {
       });
 
       this.works = [...visibleFetched, ...filteredHardcoded];
+      // 按年份排序 (最新在前)
+      this.works.sort((a, b) => (b.year || 0) - (a.year || 0));
       this.updateFilteredWorks();
       this.notify();
       console.log('[VM] Sync complete. Firestore:', visibleFetched.length, 'Hardcoded:', filteredHardcoded.length);
