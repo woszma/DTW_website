@@ -609,6 +609,33 @@ const setupEventListeners = () => {
     vm.setCurrentPage('about');
   });
 
+  // Mobile Menu Toggle
+  const menuToggle = document.getElementById('menu-toggle');
+  const overlay = document.getElementById('mobile-menu-overlay');
+  const header = document.querySelector('.main-header');
+
+  menuToggle?.addEventListener('click', () => {
+    header.classList.toggle('menu-open');
+  });
+
+  // Mobile Nav Links
+  overlay?.addEventListener('click', (e) => {
+    const link = e.target.closest('.mobile-nav-link');
+    if (link) {
+      e.preventDefault();
+      const page = link.dataset.page;
+      vm.setCurrentPage(page);
+      header.classList.remove('menu-open');
+    }
+  });
+
+  // Close menu on resize (optional safety)
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 768) {
+      header.classList.remove('menu-open');
+    }
+  });
+
   // 切換攝影/設計 (如果有的話)
   document.querySelectorAll('.main-type-link').forEach(link => {
     link.addEventListener('click', (e) => {

@@ -26,6 +26,24 @@ export const Header = (vm) => {
           <span></span>
         </button>
       </div>
+
+      <!-- Mobile Menu Overlay -->
+      <div id="mobile-menu-overlay" class="mobile-menu-overlay">
+        <div class="mobile-menu-content">
+          <div class="mobile-nav-links">
+            <a href="#" class="mobile-nav-link" data-page="home">HOME</a>
+            <a href="#" class="mobile-nav-link" data-page="works">WORKS</a>
+            <a href="#" class="mobile-nav-link" data-page="services">SERVICES</a>
+            <a href="#" class="mobile-nav-link" data-page="about">ABOUT</a>
+          </div>
+          
+          <div class="mobile-contact-info">
+            <p class="contact-label">CONTACT US</p>
+            <a href="https://wa.me/85212345678" target="_blank" class="contact-item">WHATSAPP</a>
+            <a href="mailto:info@dtw.com" class="contact-item">EMAIL</a>
+          </div>
+        </div>
+      </div>
       
       ${!isHome && vm.currentPage !== 'admin' ? `
       <nav class="category-nav" id="category-nav">
