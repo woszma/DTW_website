@@ -122,7 +122,7 @@ body:not(.is-home) .logo-img {
 /* Navigation Styles */
 .category-nav {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: flex-end;
   font-size: 11px;
   text-transform: lowercase;
@@ -132,7 +132,7 @@ body:not(.is-home) .logo-img {
 .filter-group {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: flex-start;
   flex: 1;
   gap: 20px;
   border-bottom: 1px solid #eee;
@@ -143,7 +143,7 @@ body:not(.is-home) .logo-img {
   display: flex;
   gap: 20px;
   flex-wrap: wrap;
-  justify-content: flex-end;
+  justify-content: flex-start;
 }
 
 .filter-link {
