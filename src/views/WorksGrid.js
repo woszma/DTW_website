@@ -3,7 +3,7 @@ export const WorksGrid = (vm) => {
     return `
       <div class="works-list">
         ${vm.filteredWorks.map(work => `
-          <div class="list-item">
+          <div class="list-item" data-id="${work.id}">
             <span class="item-year">${work.year}</span>
             <span class="item-title">${work.title}</span>
             <span class="item-cat">${work.category}</span>

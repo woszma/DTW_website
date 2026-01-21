@@ -8,6 +8,7 @@ import { Services } from './src/views/Services.js';
 import { Loading } from './src/views/Loading.js';
 import { AdminLogin } from './src/views/AdminLogin.js';
 import { AdminDashboard } from './src/views/AdminDashboard.js';
+import { WorkDetailModal } from './src/views/WorkDetailModal.js';
 
 // State for loading
 let isLoading = true;
@@ -583,6 +584,38 @@ const setupEventListeners = () => {
       vm.toggleViewMode();
     }
   });
+
+  // 作品點選彈窗
+  document.querySelectorAll('.work-item, .list-item').forEach(item => {
+    item.addEventListener('click', (e) => {
+      e.preventDefault();
+      const workId = item.dataset.id || item.querySelector('.item-title')?.textContent; // For list-item, title might be more reliable if ID not on data
+
+      // Find work in VM
+      const work = vm.works.find(w => w.id.toString() === workId?.toString() || w.title === workId);
+      if (work) {
+        openWorkDetail(work);
+      }
+    });
+  });
+};
+
+const openWorkDetail = (work) => {
+  const modalRoot = document.getElementById('modal-root');
+  if (modalRoot) {
+    modalRoot.innerHTML = WorkDetailModal(work, vm);
+
+    // Attach close listeners
+    document.getElementById('modal-close')?.addEventListener('click', closeModal);
+    document.getElementById('modal-overlay')?.addEventListener('click', (e) => {
+      if (e.target.id === 'modal-overlay') closeModal();
+    });
+  }
+};
+
+const closeModal = () => {
+  const modalRoot = document.getElementById('modal-root');
+  if (modalRoot) modalRoot.innerHTML = '';
 };
 
 const updateHomeBackground = (imageUrl, videoUrl, onEnd = null) => {

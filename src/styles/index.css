@@ -735,7 +735,7 @@ body.is-home main {
 .nav-link {
   font-size: 11px;
   letter-spacing: 0.15em;
-  opacity: 0.4;
+  opacity: 0.25;
 }
 
 .nav-link.active {
@@ -760,6 +760,139 @@ body.is-home main {
   font-weight: 600;
   text-decoration: underline;
   text-underline-offset: 4px;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  padding: 20px;
+}
+
+.modal-content {
+  background: white;
+  width: 100%;
+  max-width: 1000px;
+  max-height: 90vh;
+  position: relative;
+  overflow-y: auto;
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 30px;
+  cursor: pointer;
+  z-index: 10;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+}
+
+.modal-close:hover {
+  opacity: 1;
+}
+
+.modal-body {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  min-height: 500px;
+}
+
+.modal-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.modal-info {
+  padding: 60px 40px;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  margin-bottom: 30px;
+}
+
+.modal-year {
+  font-size: 10px;
+  opacity: 0.4;
+  letter-spacing: 0.1em;
+}
+
+.modal-title {
+  font-size: 24px;
+  margin: 10px 0;
+  font-weight: 300;
+}
+
+.modal-category {
+  font-size: 11px;
+  text-transform: lowercase;
+  opacity: 0.6;
+}
+
+.modal-description {
+  font-size: 13px;
+  line-height: 1.8;
+  opacity: 0.8;
+  margin-bottom: 40px;
+  white-space: pre-wrap;
+}
+
+.modal-actions {
+  margin-top: auto;
+}
+
+.video-btn {
+  display: inline-block;
+  padding: 12px 25px;
+  border: 1px solid #333;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  transition: all 0.3s;
+}
+
+.video-btn:hover {
+  background: #333;
+  color: white;
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .modal-body {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-info {
+    padding: 30px 20px;
+  }
 }
 
 /* Responsive */
