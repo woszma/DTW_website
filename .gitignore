@@ -1,4 +1,9 @@
 node_modules
+# Large media files
+改網站/*.mp4
+改網站/*.docx
+node_modules/
+dist/
 .DS_Store
 dist
 dist-ssr
