@@ -1,7 +1,11 @@
 export const Home = (vm) => {
   const base = (import.meta.env.BASE_URL || '/').replace(/\/$/, '');
-  // 獲取最近的幾個作品作為清單
-  const recentWorks = vm.works.slice(0, 5);
+
+  // 優先顯示精選作品，如果冇就顯示最近 5 個
+  const featuredWorks = vm.works.filter(w => w.featured);
+  const displayWorks = featuredWorks.length > 0
+    ? featuredWorks.slice(0, 5)
+    : vm.works.slice(0, 5);
 
   return `
     <div class="home-container">
@@ -11,11 +15,10 @@ export const Home = (vm) => {
           id="base-video"
           autoplay 
           muted 
-          loop 
           playsinline
           webkit-playsinline
         >
-          <source src="${base}/Videos/Background_Video/網站主頁_1.mp4" type="video/mp4">
+          <source src="${base}/Videos/Background_Video/main_hero_bg.mp4" type="video/mp4">
         </video>
       </div>
       <div class="home-bg-overlay"></div>
@@ -27,7 +30,7 @@ export const Home = (vm) => {
         <nav class="home-recent-works">
           <ul>
             <!-- 由 JS 填充精選作品 -->
-            ${vm.works.filter(w => w.featured).slice(0, 5).map((work, index) => `
+            ${displayWorks.map((work, index) => `
               <li style="--delay: ${0.1 + index * 0.05}s">
                 <a href="#" class="home-work-link" data-id="${work.id}">
                   <span class="work-index">${(index + 1).toString().padStart(2, '0')}</span>

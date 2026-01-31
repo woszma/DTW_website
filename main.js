@@ -120,8 +120,63 @@ const startCarousel = (theme = null) => {
       updateHomeBackground(null, firstMedia, nextSlide);
     }
   } else {
-    // 預設背景：只顯示單一封面影片，唔再輪播作品圖片
-    resetHomeBackground();
+    // 預設背景：封面影片 + 所有精選作品的 Media
+    const featuredMedia = vm.works
+      .filter(w => w.featured)
+      .map(w => w.mediaUrl || w.thumbnail)
+      .filter(m => !!m);
+
+    currentLibrary = [...backgroundVideos, ...featuredMedia];
+    currentVideoIndex = 0;
+
+    const nextSlide = () => {
+      if (carouselInterval) clearTimeout(carouselInterval);
+
+      currentVideoIndex = (currentVideoIndex + 1) % currentLibrary.length;
+      const media = currentLibrary[currentVideoIndex];
+
+      if (media === backgroundVideos[0]) {
+        resetHomeBackground();
+        const baseVideo = document.getElementById('base-video');
+        if (baseVideo) {
+          baseVideo.currentTime = 0;
+          baseVideo.play().catch(e => console.warn('[Carousel] Play failed:', e));
+
+          if (currentLibrary.length === 1) {
+            baseVideo.loop = true;
+          } else {
+            baseVideo.loop = false;
+            baseVideo.addEventListener('ended', nextSlide, { once: true });
+            // 安全機制：20秒後強制下一張
+            carouselInterval = setTimeout(nextSlide, 20000);
+          }
+        } else {
+          carouselInterval = setTimeout(nextSlide, 8000);
+        }
+      } else {
+        if (isImage(media)) {
+          updateHomeBackground(media, null, nextSlide);
+        } else {
+          updateHomeBackground(null, media, nextSlide);
+        }
+      }
+    };
+
+    // 初始狀態
+    const baseVideo = document.getElementById('base-video');
+    if (baseVideo) {
+      if (currentLibrary.length === 1) {
+        baseVideo.loop = true;
+      } else {
+        baseVideo.loop = false;
+        baseVideo.addEventListener('ended', nextSlide, { once: true });
+        // 初始等待 15 秒或播完
+        carouselInterval = setTimeout(nextSlide, 20000);
+      }
+    } else {
+      resetHomeBackground();
+      carouselInterval = setTimeout(nextSlide, 8000);
+    }
   }
 };
 
