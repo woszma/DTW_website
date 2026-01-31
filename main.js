@@ -32,14 +32,9 @@ const photography = [];
 const designWorks = [];
 const videoWorks = [];
 
-// 背景视频列表
+// 背景視頻 (單一封面影片)
 const backgroundVideos = [
-  fixPath('/Videos/Background_Video/網站主頁_1.mp4'),
-  fixPath('/Videos/Background_Video/網站主頁_2.mp4'),
-  fixPath('/Videos/Background_Video/網站主頁_3.mp4'),
-  fixPath('/Videos/Background_Video/網站主頁_4.mp4'),
-  fixPath('/Videos/Background_Video/網站主頁_5.mp4'),
-  fixPath('/Videos/Background_Video/網站主頁_6.mp4')
+  fixPath('/Videos/Background_Video/main_hero_bg.mp4')
 ];
 
 // 主題素材庫 (支持混合視頻與圖片)
@@ -102,31 +97,31 @@ const isImage = (path) => {
 const startCarousel = (theme = null) => {
   if (carouselInterval) clearInterval(carouselInterval);
 
+  // 如果有傳入特定主題 (hover)，先顯示主題素材
   if (theme && themeVideoLibraries[theme]) {
     currentLibrary = themeVideoLibraries[theme];
     currentVideoIndex = 0;
-  } else {
-    // 預設背景：結合預設影片 + 作品縮圖
-    const workImages = vm.works.filter(w => w.thumbnail).map(w => w.thumbnail);
-    currentLibrary = [...backgroundVideos, ...workImages];
-  }
 
-  const nextSlide = () => {
-    currentVideoIndex = (currentVideoIndex + 1) % currentLibrary.length;
-    const media = currentLibrary[currentVideoIndex];
-    if (isImage(media)) {
-      updateHomeBackground(media, null, nextSlide);
+    const nextSlide = () => {
+      currentVideoIndex = (currentVideoIndex + 1) % currentLibrary.length;
+      const media = currentLibrary[currentVideoIndex];
+      if (isImage(media)) {
+        updateHomeBackground(media, null, nextSlide);
+      } else {
+        updateHomeBackground(null, media, nextSlide);
+      }
+    };
+
+    // 初始播放主題素材
+    const firstMedia = currentLibrary[currentVideoIndex];
+    if (isImage(firstMedia)) {
+      updateHomeBackground(firstMedia, null, nextSlide);
     } else {
-      updateHomeBackground(null, media, nextSlide);
+      updateHomeBackground(null, firstMedia, nextSlide);
     }
-  };
-
-  // 初始播放
-  const firstMedia = currentLibrary[currentVideoIndex];
-  if (isImage(firstMedia)) {
-    updateHomeBackground(firstMedia, null, nextSlide);
   } else {
-    updateHomeBackground(null, firstMedia, nextSlide);
+    // 預設背景：只顯示單一封面影片，唔再輪播作品圖片
+    resetHomeBackground();
   }
 };
 
@@ -306,13 +301,14 @@ const updateAdminTableOnly = (vm) => {
   if (!tbody) return;
 
   console.log('[View] Incremental update for Admin Table');
-  tbody.innerHTML = vm.works.map(work => `
+  tbody.innerHTML = vm.works.map((work, index) => `
             <tr style="border-bottom: 1px solid #eee;">
-                <td style="padding: 10px; font-size: 11px; opacity: 0.6;">${work.id}</td>
+                <td style="padding: 10px; font-size: 11px; opacity: 0.6;">${index + 1}</td>
                 <td style="padding: 10px;">
                     <img src="${fixPath(work.thumbnail)}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
                 </td>
                 <td style="padding: 10px; font-weight: 500;">${work.title}</td>
+                <td style="padding: 10px; text-align: center;">${work.featured ? '⭐' : ''}</td>
                 <td style="padding: 10px;">${work.category}</td>
                 <td style="padding: 10px;">
                     <div style="display: flex; gap: 8px;">
@@ -374,6 +370,7 @@ const setupAdminListeners = (vm) => {
       const workId = document.getElementById('work-id').value;
       const title = document.getElementById('work-title').value;
       const year = parseInt(document.getElementById('work-year').value);
+      const featured = document.getElementById('work-featured').checked;
       const mainType = document.getElementById('work-mainType').value;
       const category = document.getElementById('work-category').value;
       const description = document.getElementById('work-description').value;
@@ -402,7 +399,7 @@ const setupAdminListeners = (vm) => {
       }
 
       const workData = {
-        title, year, mainType, category, description,
+        title, year, featured, mainType, category, description,
         thumbnail, mediaUrl,
         updatedAt: new Date()
       };
@@ -479,13 +476,14 @@ const setupAdminListeners = (vm) => {
   // However, for the Upload functionality, we want to fail gracefully.
 
   if (tbody) {
-    tbody.innerHTML = vm.works.map(work => `
+    tbody.innerHTML = vm.works.map((work, index) => `
             <tr style="border-bottom: 1px solid #eee;">
-                <td style="padding: 10px; font-size: 11px; opacity: 0.6;">${work.id}</td>
+                <td style="padding: 10px; font-size: 11px; opacity: 0.6;">${index + 1}</td>
                 <td style="padding: 10px;">
                     <img src="${fixPath(work.thumbnail)}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
                 </td>
                 <td style="padding: 10px; font-weight: 500;">${work.title}</td>
+                <td style="padding: 10px; text-align: center;">${work.featured ? '⭐' : ''}</td>
                 <td style="padding: 10px;">${work.category}</td>
                 <td style="padding: 10px;">
                     <div style="display: flex; gap: 8px;">
@@ -525,6 +523,7 @@ const setupAdminListeners = (vm) => {
           document.getElementById('work-id').value = work.id;
           document.getElementById('work-title').value = work.title;
           document.getElementById('work-year').value = work.year;
+          document.getElementById('work-featured').checked = !!work.featured;
           document.getElementById('work-mainType').value = work.mainType;
           document.getElementById('work-category').value = work.category;
           document.getElementById('work-description').value = work.description || '';
@@ -664,22 +663,28 @@ const setupEventListeners = () => {
   });
 
   // 主頁主題點選/懸停交互
-  document.querySelectorAll('.home-theme-link').forEach(link => {
+  document.querySelectorAll('.home-work-link').forEach(link => {
     link.addEventListener('mouseenter', (e) => {
-      const theme = e.currentTarget.dataset.theme;
-      startCarousel(theme); // 開啟特定主題的 5s 子輪播
+      const workId = e.currentTarget.dataset.id;
+      const work = vm.works.find(w => w.id.toString() === workId.toString());
+      if (work && work.mediaUrl) {
+        updateHomeBackground(null, work.mediaUrl);
+      } else if (work && work.thumbnail) {
+        updateHomeBackground(work.thumbnail, null);
+      }
     });
 
     link.addEventListener('click', (e) => {
       e.preventDefault();
-      vm.setCurrentPage('works');
+      const workId = e.currentTarget.dataset.id;
+      const work = vm.works.find(w => w.id.toString() === workId.toString());
+      if (work) openWorkDetail(work);
     });
   });
 
   // 鼠標離開列表恢復默認視頻
   document.querySelector('.home-recent-works')?.addEventListener('mouseleave', () => {
     resetHomeBackground();
-    startCarousel(); // 離開時恢復輪播
   });
 
   // 模式切換邏輯

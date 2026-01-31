@@ -13,13 +13,13 @@ export const Header = (vm) => {
           </a>
         </h1>
         <div class="main-nav-links">
-           <a href="#" class="nav-link ${vm.currentPage === 'home' ? 'active' : ''}" id="nav-home">HOME</a>
+           <a href="#" class="nav-link ${vm.currentPage === 'home' ? 'active' : ''}" id="nav-home">主頁</a>
            <span class="nav-divider">/</span>
-           <a href="#" class="nav-link ${vm.currentPage === 'works' ? 'active' : ''}" id="nav-works">WORKS</a>
+           <a href="#" class="nav-link ${vm.currentPage === 'works' ? 'active' : ''}" id="nav-works">作品</a>
            <span class="nav-divider">/</span>
-           <a href="#" class="nav-link ${vm.currentPage === 'services' ? 'active' : ''}" id="nav-services">SERVICES</a>
+           <a href="#" class="nav-link ${vm.currentPage === 'services' ? 'active' : ''}" id="nav-services">服務範圍</a>
            <span class="nav-divider">/</span>
-           <a href="#" class="nav-link ${vm.currentPage === 'about' ? 'active' : ''}" id="nav-about">ABOUT</a>
+           <a href="#" class="nav-link ${vm.currentPage === 'about' ? 'active' : ''}" id="nav-about">關於我們</a>
         </div>
         <button class="menu-toggle" id="menu-toggle">
           <span></span>
@@ -31,14 +31,14 @@ export const Header = (vm) => {
       <div id="mobile-menu-overlay" class="mobile-menu-overlay">
         <div class="mobile-menu-content">
           <div class="mobile-nav-links">
-            <a href="#" class="mobile-nav-link" data-page="home">HOME</a>
-            <a href="#" class="mobile-nav-link" data-page="works">WORKS</a>
-            <a href="#" class="mobile-nav-link" data-page="services">SERVICES</a>
-            <a href="#" class="mobile-nav-link" data-page="about">ABOUT</a>
+            <a href="#" class="mobile-nav-link" data-page="home">主頁</a>
+            <a href="#" class="mobile-nav-link" data-page="works">作品</a>
+            <a href="#" class="mobile-nav-link" data-page="services">服務範圍</a>
+            <a href="#" class="mobile-nav-link" data-page="about">關於我們</a>
           </div>
           
           <div class="mobile-contact-info">
-            <p class="contact-label">CONTACT US</p>
+            <p class="contact-label">聯絡我們</p>
             <a href="https://wa.me/85260931637" target="_blank" class="contact-item">WHATSAPP</a>
             <a href="mailto:diptowhiteproduction@gmail.com" class="contact-item">EMAIL</a>
           </div>
@@ -49,28 +49,28 @@ export const Header = (vm) => {
       <nav class="category-nav" id="category-nav">
         <div class="filter-group">
           <div class="type-switch">
-            <a href="#" class="main-type-link ${vm.mainType === 'all' ? 'active' : ''}" data-type="all">ALL</a>
+            <a href="#" class="main-type-link ${vm.mainType === 'all' ? 'active' : ''}" data-type="all">全部</a>
             <span class="nav-divider">/</span>
-            <a href="#" class="main-type-link ${vm.mainType === 'video' ? 'active' : ''}" data-type="video">VIDEO</a>
+            <a href="#" class="main-type-link ${vm.mainType === 'video' ? 'active' : ''}" data-type="video">影片製作服務</a>
             <span class="nav-divider">/</span>
-            <a href="#" class="main-type-link ${vm.mainType === 'photography' ? 'active' : ''}" data-type="photography">PHOTOGRAPHY</a>
+            <a href="#" class="main-type-link ${vm.mainType === 'photography' ? 'active' : ''}" data-type="photography">攝影服務</a>
             <span class="nav-divider">/</span>
-            <a href="#" class="main-type-link ${vm.mainType === 'design' ? 'active' : ''}" data-type="design">DESIGN</a>
+            <a href="#" class="main-type-link ${vm.mainType === 'design' ? 'active' : ''}" data-type="design">設計服務</a>
           </div>
           
           <ul class="cat-list">
             ${categories.map(cat => `
-              <li><a href="#" class="filter-link ${vm.currentCategory === cat ? 'active' : ''}" data-category="${cat}">${cat}</a></li>
+              <li><a href="#" class="filter-link ${vm.currentCategory === cat ? 'active' : ''}" data-category="${cat}">${cat === 'all' ? '全部' : (cat === 'other' ? '其他' : cat)}</a></li>
             `).join('')}
           </ul>
         </div>
         
         <div class="view-controls">
-          <span class="view-count">${vm.filteredWorks.length} items</span>
+          <span class="view-count">${vm.filteredWorks.length} 個作品</span>
           <div class="mode-switch">
-             <a href="#" id="grid-mode" class="${vm.viewMode === 'grid' ? 'active' : ''}">GRID</a>
+             <a href="#" id="grid-mode" class="${vm.viewMode === 'grid' ? 'active' : ''}">網格</a>
              <span class="nav-divider">/</span>
-             <a href="#" id="list-mode" class="${vm.viewMode === 'list' ? 'active' : ''}">LIST</a>
+             <a href="#" id="list-mode" class="${vm.viewMode === 'list' ? 'active' : ''}">列表</a>
           </div>
         </div>
       </nav>

@@ -77,11 +77,16 @@ export class WorksViewModel {
       : this.works.filter(work => work.mainType === this.mainType);
 
     if (this.currentCategory !== 'all') {
-      results = results.filter(work => (work.category || 'other') === this.currentCategory);
+      results = results.filter(work => (work.category || '其他') === this.currentCategory);
     }
 
-    // 按年份排序 (最新在前)
-    results.sort((a, b) => (b.year || 0) - (a.year || 0));
+    // 按精選優先，其次按年份排序 (最新在前)
+    results.sort((a, b) => {
+      if (a.featured !== b.featured) {
+        return a.featured ? -1 : 1;
+      }
+      return (b.year || 0) - (a.year || 0);
+    });
 
     this.filteredWorks = results;
   }

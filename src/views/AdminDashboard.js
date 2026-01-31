@@ -4,7 +4,10 @@ export const AdminDashboard = (vm) => {
     <div class="admin-dashboard-container" style="padding: 2rem;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
         <h2>作品管理後台</h2>
-        <button id="logout-btn" style="padding: 8px 16px; background: #666; color: #fff; border: none; cursor: pointer;">登出</button>
+        <div style="display: flex; gap: 1rem;">
+          <a href="#" id="go-home" style="padding: 8px 16px; background: #eee; color: #000; text-decoration: none; border: 1px solid #ddd; border-radius: 4px;">返回主頁</a>
+          <button id="logout-btn" style="padding: 8px 16px; background: #666; color: #fff; border: none; cursor: pointer; border-radius: 4px;">登出</button>
+        </div>
       </div>
 
       <div class="admin-controls" style="margin-bottom: 2rem; padding: 1rem; background: #fff; border: 1px solid #ddd;">
@@ -19,39 +22,45 @@ export const AdminDashboard = (vm) => {
           
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
             <div>
-              <label>標題</label>
+              <label>標題 / Title</label>
               <input type="text" id="work-title" required style="width: 100%; padding: 8px;">
             </div>
             <div>
-              <label>年份</label>
+              <label>年份 / Year</label>
               <input type="number" id="work-year" value="${new Date().getFullYear()}" style="width: 100%; padding: 8px;">
             </div>
+          </div>
+          
+          <div>
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="checkbox" id="work-featured" style="width: 18px; height: 18px;">
+              <span>設定為精選作品 (顯示喺主頁) / Featured on Home Page</span>
+            </label>
           </div>
 
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
              <div>
-              <label>主分類 (Main Type)</label>
+              <label>主分類 / Service Type</label>
               <select id="work-mainType" style="width: 100%; padding: 8px;">
-                <option value="photography">Photography</option>
-                <option value="design">Design</option>
-                <option value="video">Video</option>
+                <option value="video">影片製作服務</option>
+                <option value="photography">攝影服務</option>
+                <option value="design">設計服務</option>
               </select>
             </div>
             <div>
-              <label>子分類 (Category)</label>
-              <!-- 這裡可以通过 JS 動態更新選項，暫時列出所有可能 -->
-              <input type="text" id="work-category" placeholder="例如: portrait, editorial, Short Film" list="category-list" style="width: 100%; padding: 8px;">
+              <label>子分類 / Category</label>
+              <input type="text" id="work-category" placeholder="例如: 品牌形象, 活動花絮, 人訪故事" list="category-list" style="width: 100%; padding: 8px;">
               <datalist id="category-list">
-                <option value="editorial">
-                <option value="advertising">
-                <option value="portrait">
-                <option value="Event_Exhibition_Installation">
-                <option value="Multimedia">
-                <option value="Printing Materials">
-                <option value="Souvenir">
-                <option value="Commercial">
-                <option value="Short Film">
-                <option value="Documentary">
+                <!-- 影片製作服務 -->
+                <option value="品牌形象影片">
+                <option value="活動花絮">
+                <option value="人訪故事">
+                <option value="動畫製作">
+                <!-- 攝影服務 -->
+                <option value="人像攝影">
+                <option value="客製化">
+                <!-- 其他 -->
+                <option value="其他">
               </datalist>
             </div>
           </div>
@@ -95,9 +104,10 @@ export const AdminDashboard = (vm) => {
         <table style="width: 100%; border-collapse: collapse; margin-top: 1rem; background: #fff;">
           <thead>
             <tr style="background: #f0f0f0; text-align: left;">
-              <th style="padding: 10px;">ID</th>
+              <th style="padding: 10px;">序列</th>
               <th style="padding: 10px;">縮圖</th>
               <th style="padding: 10px;">標題</th>
+              <th style="padding: 10px;">精選</th>
               <th style="padding: 10px;">分類</th>
               <th style="padding: 10px;">操作</th>
             </tr>
