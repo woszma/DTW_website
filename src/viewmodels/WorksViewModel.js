@@ -1,6 +1,6 @@
 import { auth, db, storage } from '../firebase/config.js';
 import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from "firebase/auth";
-import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc, setDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 export class WorksViewModel {
@@ -208,7 +208,8 @@ export class WorksViewModel {
   async updateWork(workId, workData) {
     try {
       const docRef = doc(db, "works", workId.toString());
-      await updateDoc(docRef, workData);
+      // Use setDoc with merge:true to support upsert for hardcoded works
+      await setDoc(docRef, workData, { merge: true });
 
       const index = this.works.findIndex(w => w.id.toString() === workId.toString());
       if (index !== -1) {

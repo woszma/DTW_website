@@ -470,12 +470,26 @@ const setupAdminListeners = (vm) => {
           workData.images = currentImages;
         }
 
-        await vm.updateWork(workId, workData);
-        alert('作品已更新!');
+        const result = await vm.updateWork(workId, workData);
+        if (result.success) {
+          alert('作品已更新!');
+        } else {
+          alert('更新失敗: ' + (result.error || '原因不詳'));
+          submitBtn.disabled = false;
+          submitBtn.textContent = '保存作品';
+          return;
+        }
       } else {
         workData.images = extraImages;
-        await vm.addWork({ ...workData, createdAt: new Date() });
-        alert('作品已保存!');
+        const result = await vm.addWork({ ...workData, createdAt: new Date() });
+        if (result.success) {
+          alert('作品已保存!');
+        } else {
+          alert('保存失敗: ' + (result.error || '原因不詳'));
+          submitBtn.disabled = false;
+          submitBtn.textContent = '保存作品';
+          return;
+        }
       }
 
       form.reset();
