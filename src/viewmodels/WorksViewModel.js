@@ -80,15 +80,24 @@ export class WorksViewModel {
       results = results.filter(work => (work.category || '其他') === this.currentCategory);
     }
 
-    // 按精選優先，其次按年份排序 (最新在前)
-    results.sort((a, b) => {
-      if (a.featured !== b.featured) {
-        return a.featured ? -1 : 1;
+    // 統一排序邏輯：按精選優先，其次按年份排序 (最新在前)
+    this.sortWorks(results);
+
+    this.filteredWorks = results;
+  }
+
+  // 新增統一排序方法
+  sortWorks(worksArray) {
+    worksArray.sort((a, b) => {
+      // 確保 featured 是 boolean
+      const featuredA = !!a.featured;
+      const featuredB = !!b.featured;
+
+      if (featuredA !== featuredB) {
+        return featuredA ? -1 : 1;
       }
       return (b.year || 0) - (a.year || 0);
     });
-
-    this.filteredWorks = results;
   }
 
   getCategories() {
@@ -162,6 +171,10 @@ export class WorksViewModel {
       const docRef = await addDoc(collection(db, "works"), workData);
       const newWork = { ...workData, id: docRef.id };
       this.works = [newWork, ...this.works]; // Add to local state
+
+      // 重新對總體列表排序
+      this.sortWorks(this.works);
+
       this.updateFilteredWorks();
       this.notify();
       return { success: true };
@@ -214,6 +227,10 @@ export class WorksViewModel {
       const index = this.works.findIndex(w => w.id.toString() === workId.toString());
       if (index !== -1) {
         this.works[index] = { ...this.works[index], ...workData };
+
+        // 重新對總體列表排序
+        this.sortWorks(this.works);
+
         this.updateFilteredWorks();
         this.notify();
       }
@@ -312,8 +329,8 @@ export class WorksViewModel {
       });
 
       this.works = [...visibleFetched, ...filteredHardcoded];
-      // 按年份排序 (最新在前)
-      this.works.sort((a, b) => (b.year || 0) - (a.year || 0));
+      // 統一排序
+      this.sortWorks(this.works);
       this.updateFilteredWorks();
       this.notify();
       console.log('[VM] Sync complete. Firestore:', visibleFetched.length, 'Hardcoded:', filteredHardcoded.length);

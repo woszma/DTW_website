@@ -45,6 +45,7 @@ export const AdminDashboard = (vm) => {
                 <option value="video">影片製作服務</option>
                 <option value="photography">攝影服務</option>
                 <option value="design">設計服務</option>
+                <option value="workshop">工作坊</option>
               </select>
             </div>
             <div>

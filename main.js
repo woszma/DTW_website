@@ -350,29 +350,38 @@ const render = () => {
   lastPage = vm.currentPage;
 };
 
-// 專為 Admin 頁面設計嘅增量更新
-const updateAdminTableOnly = (vm) => {
+const renderAdminTable = (vm) => {
   const tbody = document.getElementById('admin-works-table-body');
-  if (!tbody) return;
+  if (!tbody) {
+    console.warn('[View] Admin table body not found');
+    return;
+  }
 
-  console.log('[View] Incremental update for Admin Table');
+  console.log('[View] Rendering Admin Table, works count:', vm.works.length);
   tbody.innerHTML = vm.works.map((work, index) => `
-            <tr style="border-bottom: 1px solid #eee;">
+            <tr style="border-bottom: 1px solid #eee; ${work.featured ? 'background: #fffdf0;' : ''}">
                 <td style="padding: 10px; font-size: 11px; opacity: 0.6;">${index + 1}</td>
                 <td style="padding: 10px;">
-                    <img src="${fixPath(work.thumbnail)}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+                    <img src="${fixPath(work.thumbnail)}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; border: 1px solid #eee;">
                 </td>
-                <td style="padding: 10px; font-weight: 500;">${work.title}</td>
-                <td style="padding: 10px; text-align: center;">${work.featured ? '⭐' : ''}</td>
-                <td style="padding: 10px;">${work.category}</td>
+                <td style="padding: 10px; font-weight: 500;">
+                  ${work.title}
+                  ${work.featured ? '<span style="display: block; font-size: 10px; color: #d4af37; margin-top: 4px;">★ 精選作品</span>' : ''}
+                </td>
+                <td style="padding: 10px; text-align: center; font-size: 1.2rem;">${work.featured ? '⭐' : ''}</td>
+                <td style="padding: 10px; font-size: 12px; color: #666;">${work.category || '未分類'}</td>
                 <td style="padding: 10px;">
                     <div style="display: flex; gap: 8px;">
-                      <button type="button" class="edit-btn" data-id="${work.id}" style="padding: 5px 12px; background: #eee; border: none; cursor: pointer; border-radius: 4px;">編輯</button>
-                      <button type="button" class="delete-btn" data-id="${work.id}" style="padding: 5px 12px; background: #ffebeb; color: #d00; border: none; cursor: pointer; border-radius: 4px;">刪除</button>
+                      <button type="button" class="edit-btn" data-id="${work.id}" style="padding: 5px 12px; background: #eee; border: none; cursor: pointer; border-radius: 4px; font-size: 12px;">編輯</button>
+                      <button type="button" class="delete-btn" data-id="${work.id}" style="padding: 5px 12px; background: #ffebeb; color: #d00; border: none; cursor: pointer; border-radius: 4px; font-size: 12px;">刪除</button>
                     </div>
                 </td>
             </tr>
         `).join('');
+};
+
+const updateAdminTableOnly = (vm) => {
+  renderAdminTable(vm);
 };
 
 const setupLoginListeners = (vm) => {
@@ -545,23 +554,7 @@ const setupAdminListeners = (vm) => {
   // However, for the Upload functionality, we want to fail gracefully.
 
   if (tbody) {
-    tbody.innerHTML = vm.works.map((work, index) => `
-            <tr style="border-bottom: 1px solid #eee;">
-                <td style="padding: 10px; font-size: 11px; opacity: 0.6;">${index + 1}</td>
-                <td style="padding: 10px;">
-                    <img src="${fixPath(work.thumbnail)}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
-                </td>
-                <td style="padding: 10px; font-weight: 500;">${work.title}</td>
-                <td style="padding: 10px; text-align: center;">${work.featured ? '⭐' : ''}</td>
-                <td style="padding: 10px;">${work.category}</td>
-                <td style="padding: 10px;">
-                    <div style="display: flex; gap: 8px;">
-                      <button type="button" class="edit-btn" data-id="${work.id}" style="padding: 5px 12px; background: #eee; border: none; cursor: pointer; border-radius: 4px;">編輯</button>
-                      <button type="button" class="delete-btn" data-id="${work.id}" style="padding: 5px 12px; background: #ffebeb; color: #d00; border: none; cursor: pointer; border-radius: 4px;">刪除</button>
-                    </div>
-                </td>
-            </tr>
-        `).join('');
+    renderAdminTable(vm);
 
     // Event Delegation for Table Buttons
     tbody.addEventListener('click', (e) => {

@@ -45,7 +45,7 @@ export const Header = (vm) => {
         </div>
       </div>
       
-      ${!isHome && vm.currentPage !== 'admin' ? `
+      ${!['home', 'about', 'services', 'admin'].includes(vm.currentPage) ? `
       <nav class="category-nav" id="category-nav">
         <div class="filter-group">
           <div class="type-switch">
@@ -56,6 +56,8 @@ export const Header = (vm) => {
             <a href="#" class="main-type-link ${vm.mainType === 'photography' ? 'active' : ''}" data-type="photography">攝影服務</a>
             <span class="nav-divider">/</span>
             <a href="#" class="main-type-link ${vm.mainType === 'design' ? 'active' : ''}" data-type="design">設計服務</a>
+            <span class="nav-divider">/</span>
+            <a href="#" class="main-type-link ${vm.mainType === 'workshop' ? 'active' : ''}" data-type="workshop">工作坊</a>
           </div>
           
           <ul class="cat-list">
