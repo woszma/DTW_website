@@ -89,6 +89,12 @@ export const AdminDashboard = (vm) => {
           </div>
 
           <div>
+            <label>Mouse Hover 專用影片 (主頁播放用)</label>
+            <input type="file" id="work-hover-video-file" accept="video/*">
+            <input type="text" id="work-hover-video-url" placeholder="或輸入影片 URL" style="width: 100%; padding: 8px; margin-top: 5px;">
+          </div>
+
+          <div>
             <label>描述</label>
             <textarea id="work-description" rows="3" style="width: 100%; padding: 8px;"></textarea>
           </div>

@@ -32,6 +32,72 @@ const photography = [];
 const designWorks = [];
 const videoWorks = [
   {
+    id: 'hero-1',
+    title: '網站主頁作品 1',
+    year: 2025,
+    featured: true,
+    mainType: 'video',
+    category: '品牌形象影片',
+    thumbnail: '/Videos/Background_Video/網站主頁_1.mp4',
+    mediaUrl: '/Videos/Background_Video/網站主頁_1.mp4',
+    hoverVideoUrl: '/Videos/Background_Video/網站主頁_1.mp4'
+  },
+  {
+    id: 'hero-2',
+    title: '網站主頁作品 2',
+    year: 2025,
+    featured: true,
+    mainType: 'video',
+    category: '品牌形象影片',
+    thumbnail: '/Videos/Background_Video/網站主頁_2.mp4',
+    mediaUrl: '/Videos/Background_Video/網站主頁_2.mp4',
+    hoverVideoUrl: '/Videos/Background_Video/網站主頁_2.mp4'
+  },
+  {
+    id: 'hero-3',
+    title: '網站主頁作品 3',
+    year: 2025,
+    featured: true,
+    mainType: 'video',
+    category: '品牌形象影片',
+    thumbnail: '/Videos/Background_Video/網站主頁_3.mp4',
+    mediaUrl: '/Videos/Background_Video/網站主頁_3.mp4',
+    hoverVideoUrl: '/Videos/Background_Video/網站主頁_3.mp4'
+  },
+  {
+    id: 'hero-4',
+    title: '網站主頁作品 4',
+    year: 2025,
+    featured: true,
+    mainType: 'video',
+    category: '品牌形象影片',
+    thumbnail: '/Videos/Background_Video/網站主頁_4.mp4',
+    mediaUrl: '/Videos/Background_Video/網站主頁_4.mp4',
+    hoverVideoUrl: '/Videos/Background_Video/網站主頁_4.mp4'
+  },
+  {
+    id: 'hero-5',
+    title: '網站主頁作品 5',
+    year: 2025,
+    featured: true,
+    mainType: 'video',
+    category: '品牌形象影片',
+    thumbnail: '/Videos/Background_Video/網站主頁_5.mp4',
+    mediaUrl: '/Videos/Background_Video/網站主頁_5.mp4',
+    hoverVideoUrl: '/Videos/Background_Video/網站主頁_5.mp4'
+  },
+  {
+    id: 'hero-6',
+    title: '網站主頁作品 6',
+    year: 2025,
+    featured: true,
+    mainType: 'video',
+    category: '品牌形象影片',
+    thumbnail: '/Videos/Background_Video/網站主頁_6.mp4',
+    mediaUrl: '/Videos/Background_Video/網站主頁_6.mp4',
+    hoverVideoUrl: '/Videos/Background_Video/網站主頁_6.mp4'
+  },
+  {
     id: 'light-2021',
     title: '成為一點光(2021)',
     year: 2021,
@@ -39,7 +105,8 @@ const videoWorks = [
     mainType: 'video',
     category: '品牌形象影片',
     thumbnail: '/Videos/Background_Video/成為一點光_網站版本.mp4',
-    mediaUrl: '/Videos/Background_Video/成為一點光_網站版本.mp4'
+    mediaUrl: '/Videos/Background_Video/成為一點光_網站版本.mp4',
+    hoverVideoUrl: '/Videos/Background_Video/成為一點光_網站版本.mp4'
   },
   {
     id: 'vision-2024',
@@ -49,7 +116,8 @@ const videoWorks = [
     mainType: 'video',
     category: '品牌形象影片',
     thumbnail: '/Videos/Background_Video/小步藝術_網站version.mp4',
-    mediaUrl: '/Videos/Background_Video/小步藝術_網站version.mp4'
+    mediaUrl: '/Videos/Background_Video/小步藝術_網站version.mp4',
+    hoverVideoUrl: '/Videos/Background_Video/小步藝術_網站version.mp4'
   },
   {
     id: 'puppet-2024',
@@ -59,7 +127,8 @@ const videoWorks = [
     mainType: 'video',
     category: '品牌形象影片',
     thumbnail: '/Videos/Background_Video/木偶出走記_網站verison.mp4',
-    mediaUrl: '/Videos/Background_Video/木偶出走記_網站verison.mp4'
+    mediaUrl: '/Videos/Background_Video/木偶出走記_網站verison.mp4',
+    hoverVideoUrl: '/Videos/Background_Video/木偶出走記_網站verison.mp4'
   },
   {
     id: 'eighteen-2024',
@@ -69,7 +138,8 @@ const videoWorks = [
     mainType: 'video',
     category: '品牌形象影片',
     thumbnail: '/Videos/Background_Video/十八_網站ver.mp4',
-    mediaUrl: '/Videos/Background_Video/十八_網站ver.mp4'
+    mediaUrl: '/Videos/Background_Video/十八_網站ver.mp4',
+    hoverVideoUrl: '/Videos/Background_Video/十八_網站ver.mp4'
   },
   {
     id: 'midnight-2025',
@@ -79,7 +149,8 @@ const videoWorks = [
     mainType: 'video',
     category: '品牌形象影片',
     thumbnail: '/Videos/Background_Video/midnightstudio_網站.mp4',
-    mediaUrl: '/Videos/Background_Video/midnightstudio_網站.mp4'
+    mediaUrl: '/Videos/Background_Video/midnightstudio_網站.mp4',
+    hoverVideoUrl: '/Videos/Background_Video/midnightstudio_網站.mp4'
   }
 ];
 
@@ -509,6 +580,13 @@ const setupAdminListeners = (vm) => {
         mediaUrl = await vm.uploadFile(mediaFile);
       }
 
+      let hoverVideoUrl = document.getElementById('work-hover-video-url').value;
+      const hoverFile = document.getElementById('work-hover-video-file').files[0];
+
+      if (hoverFile) {
+        hoverVideoUrl = await vm.uploadFile(hoverFile);
+      }
+
       // Handle multiple images
       const imagesFiles = document.getElementById('work-images-files').files;
       let extraImages = [];
@@ -520,7 +598,7 @@ const setupAdminListeners = (vm) => {
 
       const workData = {
         title, year, featured, mainType, category, description,
-        thumbnail, mediaUrl,
+        thumbnail, mediaUrl, hoverVideoUrl,
         updatedAt: new Date()
       };
 
@@ -651,6 +729,7 @@ const setupAdminListeners = (vm) => {
           document.getElementById('work-description').value = work.description || '';
           document.getElementById('work-thumbnail-url').value = work.thumbnail;
           document.getElementById('work-media-url').value = work.mediaUrl || '';
+          document.getElementById('work-hover-video-url').value = work.hoverVideoUrl || '';
 
           // 顯示現有額外相片 (加入個別刪除功能)
           const previewContainer = document.getElementById('existing-images-preview');
@@ -788,11 +867,21 @@ const setupEventListeners = () => {
   document.querySelectorAll('.home-work-link').forEach(link => {
     link.addEventListener('mouseenter', (e) => {
       const workId = e.currentTarget.dataset.id;
-      const work = vm.works.find(w => w.id.toString() === workId.toString());
-      if (work && work.mediaUrl) {
-        updateHomeBackground(null, work.mediaUrl);
-      } else if (work && work.thumbnail) {
-        updateHomeBackground(work.thumbnail, null);
+      const work = vm.works.find(w => String(w.id) === String(workId));
+
+      // 優先使用專屬 hover 影片
+      const hoverVideo = work?.hoverVideoUrl;
+      const media = work?.mediaUrl;
+      const thumb = work?.thumbnail;
+
+      if (hoverVideo) {
+        updateHomeBackground(null, hoverVideo);
+      } else if (media && !isImage(media)) {
+        updateHomeBackground(null, media);
+      } else if (thumb && !isImage(thumb)) {
+        updateHomeBackground(null, thumb);
+      } else if (thumb) {
+        updateHomeBackground(thumb, null);
       }
     });
 
