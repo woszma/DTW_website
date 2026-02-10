@@ -89,9 +89,9 @@ export class WorksViewModel {
   // 新增統一排序方法
   sortWorks(worksArray) {
     worksArray.sort((a, b) => {
-      // 確保 featured 是 boolean
-      const featuredA = !!a.featured;
-      const featuredB = !!b.featured;
+      // 確保 featured 是 boolean (相容字串 "true"/"false")
+      const featuredA = a.featured === true || a.featured === 'true';
+      const featuredB = b.featured === true || b.featured === 'true';
 
       if (featuredA !== featuredB) {
         return featuredA ? -1 : 1;
@@ -307,6 +307,7 @@ export class WorksViewModel {
 
   // Method to fetch initial data if we were fully migrating (optional for now as we mix hardcoded + dynamic)
   async fetchWorks() {
+    console.log('[VM] Starting fetchWorks...');
     try {
       const querySnapshot = await getDocs(collection(db, "works"));
       const fetchedWorks = [];
@@ -314,28 +315,42 @@ export class WorksViewModel {
         fetchedWorks.push({ ...doc.data(), id: doc.id });
       });
 
-      // 1. 過濾掉已刪除的作品 (不論是 Firestore 還是 Hardcoded)
+      // 1. 過濾掉已刪除的作品
       const visibleFetched = fetchedWorks.filter(fw => !this.deletedIds.includes(fw.id.toString()));
 
-      // 2. 獲取硬編碼作品
-      //    注意：this.initialHardcodedWorks 應該在 constructor 中保存一份原始副本
-      const hardcoded = this.originalHardcodedWorks || this.works;
+      // 2. 獲取硬編碼作品並與 Firestore 數據合併
+      const hardcoded = this.originalHardcodedWorks || [];
 
-      const filteredHardcoded = hardcoded.filter(w => {
-        const isDeleted = this.deletedIds.includes(w.id.toString());
-        // 如果 Firestore 中已經存在相同標題的作品，則視為已遷移，隱藏硬編碼版本
-        const isDuplicate = visibleFetched.some(fw => fw.title === w.title);
+      const mergedVisibleFetched = visibleFetched.map(fw => {
+        // 如果標題匹配，嘗試合併屬性（例如優先使用硬編碼嘅 featured 標誌，直到數據完全遷移）
+        const hwMatch = hardcoded.find(hw => hw.title === fw.title);
+        if (hwMatch) {
+          return { ...hwMatch, ...fw, featured: fw.featured || hwMatch.featured };
+        }
+        return fw;
+      });
+
+      const filteredHardcoded = hardcoded.filter(hw => {
+        const isDeleted = this.deletedIds.includes(hw.id.toString());
+        // 如果 Firestore 中已經存在相同標題的作品，則視為已遷移，唔再重複顯示硬編碼版本
+        const isDuplicate = mergedVisibleFetched.some(fw => fw.title === hw.title);
         return !isDeleted && !isDuplicate;
       });
 
-      this.works = [...visibleFetched, ...filteredHardcoded];
+      this.works = [...mergedVisibleFetched, ...filteredHardcoded];
+
+      // 確保所有 work.featured 轉化為正確嘅 type (如果來自 Firestore 可能是 string)
+      this.works.forEach(w => {
+        w.featured = w.featured === true || w.featured === 'true';
+      });
+
       // 統一排序
       this.sortWorks(this.works);
       this.updateFilteredWorks();
       this.notify();
-      console.log('[VM] Sync complete. Firestore:', visibleFetched.length, 'Hardcoded:', filteredHardcoded.length);
+      console.log('[VM] Sync complete. Firestore(Merged):', mergedVisibleFetched.length, 'Hardcoded(New):', filteredHardcoded.length);
     } catch (e) {
-      console.error("Error fetching works: ", e);
+      console.error("[VM] Error fetching works: ", e);
     }
   }
 

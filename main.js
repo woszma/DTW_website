@@ -408,12 +408,16 @@ const renderAdminTable = (vm) => {
     return;
   }
 
-  console.log('[View] Rendering Admin Table, works count:', vm.works.length);
-  tbody.innerHTML = vm.works.map((work, index) => `
+  tbody.innerHTML = vm.works.map((work, index) => {
+    const isVideoThumb = work.thumbnail && work.thumbnail.toLowerCase().endsWith('.mp4');
+    return `
             <tr style="border-bottom: 1px solid #eee; ${work.featured ? 'background: #fffdf0;' : ''}">
                 <td style="padding: 10px; font-size: 11px; opacity: 0.6;">${index + 1}</td>
                 <td style="padding: 10px;">
-                    <img src="${fixPath(work.thumbnail)}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; border: 1px solid #eee;">
+                    ${isVideoThumb
+        ? `<div style="width: 50px; height: 50px; background: #000; display: flex; align-items: center; justify-content: center; border-radius: 4px; color: #fff; font-size: 10px;">VIDEO</div>`
+        : `<img src="${fixPath(work.thumbnail)}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; border: 1px solid #eee;">`
+      }
                 </td>
                 <td style="padding: 10px; font-weight: 500;">
                   ${work.title}
@@ -428,7 +432,8 @@ const renderAdminTable = (vm) => {
                     </div>
                 </td>
             </tr>
-        `).join('');
+        `;
+  }).join('');
 };
 
 const updateAdminTableOnly = (vm) => {
@@ -630,8 +635,12 @@ const setupAdminListeners = (vm) => {
         e.preventDefault();
         e.stopPropagation();
         const id = editBtn.dataset.id;
-        console.log('[View] Edit clicked for ID:', id);
-        const work = vm.works.find(w => w.id.toString() === id.toString());
+        console.log('[View] Edit clicked for ID:', id, 'ID Type:', typeof id);
+
+        // 更加穩健嘅查找邏輯
+        const work = vm.works.find(w => String(w.id) === String(id));
+        console.log('[View] Found work for editing:', work);
+
         if (work) {
           document.getElementById('work-id').value = work.id;
           document.getElementById('work-title').value = work.title;
