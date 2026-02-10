@@ -45,7 +45,7 @@ export const Header = (vm) => {
         </div>
       </div>
       
-      ${!['home', 'about', 'services', 'admin'].includes(vm.currentPage) ? `
+      ${vm.currentPage === 'works' ? `
       <nav class="category-nav" id="category-nav">
         <div class="filter-group">
           <div class="type-switch">

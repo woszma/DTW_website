@@ -30,7 +30,58 @@ const fixPath = (path) => {
 const photographyWorks = [];
 const photography = [];
 const designWorks = [];
-const videoWorks = [];
+const videoWorks = [
+  {
+    id: 'light-2021',
+    title: '成為一點光(2021)',
+    year: 2021,
+    featured: true,
+    mainType: 'video',
+    category: '品牌形象影片',
+    thumbnail: '/Videos/Background_Video/成為一點光_網站版本.mp4',
+    mediaUrl: '/Videos/Background_Video/成為一點光_網站版本.mp4'
+  },
+  {
+    id: 'vision-2024',
+    title: '不同視覺同樣精彩(2024)',
+    year: 2024,
+    featured: true,
+    mainType: 'video',
+    category: '品牌形象影片',
+    thumbnail: '/Videos/Background_Video/小步藝術_網站version.mp4',
+    mediaUrl: '/Videos/Background_Video/小步藝術_網站version.mp4'
+  },
+  {
+    id: 'puppet-2024',
+    title: '木偶出走記(2024)',
+    year: 2024,
+    featured: true,
+    mainType: 'video',
+    category: '品牌形象影片',
+    thumbnail: '/Videos/Background_Video/木偶出走記_網站verison.mp4',
+    mediaUrl: '/Videos/Background_Video/木偶出走記_網站verison.mp4'
+  },
+  {
+    id: 'eighteen-2024',
+    title: '十八(2024)',
+    year: 2024,
+    featured: true,
+    mainType: 'video',
+    category: '品牌形象影片',
+    thumbnail: '/Videos/Background_Video/十八_網站ver.mp4',
+    mediaUrl: '/Videos/Background_Video/十八_網站ver.mp4'
+  },
+  {
+    id: 'midnight-2025',
+    title: 'Midnight studio (2025)',
+    year: 2025,
+    featured: true,
+    mainType: 'video',
+    category: '品牌形象影片',
+    thumbnail: '/Videos/Background_Video/midnightstudio_網站.mp4',
+    mediaUrl: '/Videos/Background_Video/midnightstudio_網站.mp4'
+  }
+];
 
 // 背景視頻 (單一封面影片)
 const backgroundVideos = [
@@ -184,7 +235,7 @@ const stopCarousel = () => {
   if (carouselInterval) clearInterval(carouselInterval);
 };
 
-const vm = new WorksViewModel([]);
+const vm = new WorksViewModel([...videoWorks]);
 
 // Preload resources function
 const preloadResources = async () => {
