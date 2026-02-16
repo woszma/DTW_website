@@ -27,11 +27,11 @@ export class WorksViewModel {
 
   fixPath(path) {
     if (!path || path.startsWith('http') || path.startsWith('data:')) return path;
-    const base = (import.meta.env.BASE_URL || '/').replace(/\/$/, '');
-    if (base && path.startsWith(base)) return path;
-    let cleanPath = path.replace(/^\/public\//, '/');
-    if (!cleanPath.startsWith('/')) cleanPath = '/' + cleanPath;
-    return base + cleanPath;
+    const base = (import.meta.env.BASE_URL || './').replace(/\/$/, '');
+    let cleanPath = path.replace(/^\/+/, '');
+    cleanPath = cleanPath.replace(/^public\//, '');
+    if (base === '.' || base === './') return './' + cleanPath;
+    return base + '/' + cleanPath;
   }
 
   checkFirebaseConfig() {

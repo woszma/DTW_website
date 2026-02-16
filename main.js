@@ -18,11 +18,19 @@ let lastUser = null;
 // 資源路徑修復工具
 const fixPath = (path) => {
   if (!path || path.startsWith('http') || path.startsWith('data:')) return path;
-  const base = (import.meta.env.BASE_URL || '/').replace(/\/$/, '');
-  if (base && path.startsWith(base)) return path;
-  let cleanPath = path.replace(/^\/public\//, '/');
-  if (!cleanPath.startsWith('/')) cleanPath = '/' + cleanPath;
-  return base + cleanPath;
+
+  // 如果是 Vite 定義嘅相對路径 base
+  const base = (import.meta.env.BASE_URL || './').replace(/\/$/, '');
+
+  let cleanPath = path.replace(/^\/+/, ''); // 移除開頭所有斜杠
+  cleanPath = cleanPath.replace(/^public\//, ''); // 移除 public/ 前綴
+
+  // 如果 base 係 ./，就直接返個相對路徑
+  if (base === '.' || base === './') {
+    return './' + cleanPath;
+  }
+
+  return base + '/' + cleanPath;
 };
 
 // 初始化數據 - 所有作品將從 Firebase 加載
