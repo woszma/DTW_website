@@ -40,72 +40,6 @@ const photography = [];
 const designWorks = [];
 const videoWorks = [
   {
-    id: 'hero-1',
-    title: '網站主頁作品 1',
-    year: 2025,
-    featured: true,
-    mainType: 'video',
-    category: '品牌形象影片',
-    thumbnail: '/Videos/Background_Video/網站主頁_1.mp4',
-    mediaUrl: '/Videos/Background_Video/網站主頁_1.mp4',
-    hoverVideoUrl: '/Videos/Background_Video/網站主頁_1.mp4'
-  },
-  {
-    id: 'hero-2',
-    title: '網站主頁作品 2',
-    year: 2025,
-    featured: true,
-    mainType: 'video',
-    category: '品牌形象影片',
-    thumbnail: '/Videos/Background_Video/網站主頁_2.mp4',
-    mediaUrl: '/Videos/Background_Video/網站主頁_2.mp4',
-    hoverVideoUrl: '/Videos/Background_Video/網站主頁_2.mp4'
-  },
-  {
-    id: 'hero-3',
-    title: '網站主頁作品 3',
-    year: 2025,
-    featured: true,
-    mainType: 'video',
-    category: '品牌形象影片',
-    thumbnail: '/Videos/Background_Video/網站主頁_3.mp4',
-    mediaUrl: '/Videos/Background_Video/網站主頁_3.mp4',
-    hoverVideoUrl: '/Videos/Background_Video/網站主頁_3.mp4'
-  },
-  {
-    id: 'hero-4',
-    title: '網站主頁作品 4',
-    year: 2025,
-    featured: true,
-    mainType: 'video',
-    category: '品牌形象影片',
-    thumbnail: '/Videos/Background_Video/網站主頁_4.mp4',
-    mediaUrl: '/Videos/Background_Video/網站主頁_4.mp4',
-    hoverVideoUrl: '/Videos/Background_Video/網站主頁_4.mp4'
-  },
-  {
-    id: 'hero-5',
-    title: '網站主頁作品 5',
-    year: 2025,
-    featured: true,
-    mainType: 'video',
-    category: '品牌形象影片',
-    thumbnail: '/Videos/Background_Video/網站主頁_5.mp4',
-    mediaUrl: '/Videos/Background_Video/網站主頁_5.mp4',
-    hoverVideoUrl: '/Videos/Background_Video/網站主頁_5.mp4'
-  },
-  {
-    id: 'hero-6',
-    title: '網站主頁作品 6',
-    year: 2025,
-    featured: true,
-    mainType: 'video',
-    category: '品牌形象影片',
-    thumbnail: '/Videos/Background_Video/網站主頁_6.mp4',
-    mediaUrl: '/Videos/Background_Video/網站主頁_6.mp4',
-    hoverVideoUrl: '/Videos/Background_Video/網站主頁_6.mp4'
-  },
-  {
     id: 'light-2021',
     title: '成為一點光(2021)',
     year: 2021,
@@ -978,7 +912,7 @@ const updateHomeBackground = (imageUrl, videoUrl, onEnd = null) => {
       nextMedia.setAttribute('playsinline', 'true');
       nextMedia.disablePictureInPicture = true;
       nextMedia.loop = false;
-      nextMedia.src = videoUrl;
+      nextMedia.src = fixPath(videoUrl);
 
       if (onEnd) {
         nextMedia.addEventListener('ended', onEnd, { once: true });
@@ -986,7 +920,7 @@ const updateHomeBackground = (imageUrl, videoUrl, onEnd = null) => {
         carouselInterval = setTimeout(onEnd, 15000);
       }
     } else {
-      nextMedia.src = imageUrl;
+      nextMedia.src = fixPath(imageUrl);
       // 圖片則使用 4s 輪換
       if (onEnd) {
         carouselInterval = setTimeout(onEnd, 4000);
