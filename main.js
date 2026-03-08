@@ -955,15 +955,23 @@ const resetHomeBackground = () => {
 vm.subscribe(render);
 
 // 初始渲染
-document.addEventListener('DOMContentLoaded', () => {
-  render(); // Show loading initially
-  preloadResources(); // Start loading
-  vm.fetchWorks(); // Sync data from Firebase
+render(); // Show loading initially
+preloadResources(); // Start loading
+vm.fetchWorks(); // Sync data from Firebase
 
-  // Backdoor for admin
-  window.goToAdmin = () => vm.setCurrentPage('admin');
-  // Check URL hash for admin
+// Backdoor for admin
+window.goToAdmin = () => vm.setCurrentPage('admin');
+
+// Check URL hash for admin initially
+if (window.location.hash === '#admin') {
+  vm.setCurrentPage('admin');
+}
+
+// 監聽 URL hash 改變，支援不刷新進入後台
+window.addEventListener('hashchange', () => {
   if (window.location.hash === '#admin') {
     vm.setCurrentPage('admin');
+  } else if (window.location.hash === '') {
+    vm.setCurrentPage('home'); // 可選：回到主頁
   }
 });
