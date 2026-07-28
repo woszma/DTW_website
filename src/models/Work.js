@@ -1,5 +1,5 @@
 export class Work {
-  constructor(id, title, category, year, thumbnail, description, mainType = 'photography', mediaUrl = null, images = [], featured = false) {
+  constructor(id, title, category, year, thumbnail, description, mainType = 'photography', mediaUrl = null, images = [], featured = false, pinned = false) {
     this.id = id;
     this.title = title;
     this.category = category;
@@ -10,6 +10,7 @@ export class Work {
     this.mainType = mainType;
     this.images = images;
     this.featured = featured;
+    this.pinned = pinned;
   }
 }
 

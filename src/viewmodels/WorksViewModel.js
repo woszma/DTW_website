@@ -89,13 +89,14 @@ export class WorksViewModel {
   // 新增統一排序方法
   sortWorks(worksArray) {
     worksArray.sort((a, b) => {
-      // 確保 featured 是 boolean (相容字串 "true"/"false")
+      const pinnedA = a.pinned === true || a.pinned === 'true';
+      const pinnedB = b.pinned === true || b.pinned === 'true';
+      if (pinnedA !== pinnedB) return pinnedA ? -1 : 1;
+
       const featuredA = a.featured === true || a.featured === 'true';
       const featuredB = b.featured === true || b.featured === 'true';
+      if (featuredA !== featuredB) return featuredA ? -1 : 1;
 
-      if (featuredA !== featuredB) {
-        return featuredA ? -1 : 1;
-      }
       return (b.year || 0) - (a.year || 0);
     });
   }
@@ -342,6 +343,7 @@ export class WorksViewModel {
       // 確保所有 work.featured 轉化為正確嘅 type (如果來自 Firestore 可能是 string)
       this.works.forEach(w => {
         w.featured = w.featured === true || w.featured === 'true';
+        w.pinned = w.pinned === true || w.pinned === 'true';
       });
 
       // 統一排序

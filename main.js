@@ -437,6 +437,7 @@ const renderAdminTable = (vm) => {
                   ${work.featured ? '<span style="display: block; font-size: 10px; color: #d4af37; margin-top: 4px;">★ 精選作品</span>' : ''}
                 </td>
                 <td style="padding: 10px; text-align: center; font-size: 1.2rem;">${work.featured ? '⭐' : ''}</td>
+                <td style="padding: 10px; text-align: center; font-size: 1.2rem;">${work.pinned ? '📌' : ''}</td>
                 <td style="padding: 10px; font-size: 12px; color: #666;">${work.category || '未分類'}</td>
                 <td style="padding: 10px;">
                     <div style="display: flex; gap: 8px;">
@@ -504,6 +505,7 @@ const setupAdminListeners = (vm) => {
       const title = document.getElementById('work-title').value;
       const year = parseInt(document.getElementById('work-year').value);
       const featured = document.getElementById('work-featured').checked;
+      const pinned = document.getElementById('work-pinned').checked;
       const mainType = document.getElementById('work-mainType').value;
       const category = document.getElementById('work-category').value;
       const description = document.getElementById('work-description').value;
@@ -539,7 +541,7 @@ const setupAdminListeners = (vm) => {
       }
 
       const workData = {
-        title, year, featured, mainType, category, description,
+        title, year, featured, pinned, mainType, category, description,
         thumbnail, mediaUrl, hoverVideoUrl,
         updatedAt: new Date()
       };
@@ -666,6 +668,7 @@ const setupAdminListeners = (vm) => {
           document.getElementById('work-title').value = work.title;
           document.getElementById('work-year').value = work.year;
           document.getElementById('work-featured').checked = !!work.featured;
+          document.getElementById('work-pinned').checked = !!work.pinned;
           document.getElementById('work-mainType').value = work.mainType;
           document.getElementById('work-category').value = work.category;
           document.getElementById('work-description').value = work.description || '';

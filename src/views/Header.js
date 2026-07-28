@@ -41,6 +41,7 @@ export const Header = (vm) => {
             <p class="contact-label">聯絡我們</p>
             <a href="https://wa.me/85260931637" target="_blank" class="contact-item">WHATSAPP</a>
             <a href="mailto:diptowhiteproduction@gmail.com" class="contact-item">EMAIL</a>
+            <a href="https://www.instagram.com/diptowhiteproduction?igsh=ZHBhaWkwcDZ6OHNi&utm_source=qr" target="_blank" class="contact-item">INSTAGRAM</a>
           </div>
         </div>
       </div>

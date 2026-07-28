@@ -38,6 +38,13 @@ export const AdminDashboard = (vm) => {
             </label>
           </div>
 
+          <div>
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="checkbox" id="work-pinned" style="width: 18px; height: 18px;">
+              <span>置頂顯示 (排喺作品最前) / Pin to Top of Works</span>
+            </label>
+          </div>
+
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
              <div>
               <label>主分類 / Service Type</label>
@@ -115,6 +122,7 @@ export const AdminDashboard = (vm) => {
               <th style="padding: 10px;">縮圖</th>
               <th style="padding: 10px;">標題</th>
               <th style="padding: 10px;">精選</th>
+              <th style="padding: 10px;">置頂</th>
               <th style="padding: 10px;">分類</th>
               <th style="padding: 10px;">操作</th>
             </tr>
